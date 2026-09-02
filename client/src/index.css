@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #DE7358;
+    --color-maroon: #8A202D;
+    --color-gold: #C8A344;
+    --color-cream: #FAF8EB;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overflow-x: hidden;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #2D2424;
+    background-color: #FFFDF9;
+  }
+
+  /* Headings with Playfair Display / Serif */
+  h1, h2, h3, .font-serif-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .font-devanagari {
+    font-family: 'Rozha One', 'Noto Serif Devanagari', serif;
+  }
+}
+
+@layer utilities {
+  /* Safe Area utilities for iOS/Android notches and home bars */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Devotional Glassmorphism */
+  .glass-devotional {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 212, 221, 0.5);
+  }
+
+  .glass-dark {
+    background: rgba(77, 18, 25, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(200, 163, 68, 0.2);
+  }
+
+  .gold-gradient-text {
+    background: linear-gradient(135deg, #B08832 0%, #E8D497 50%, #8E6727 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .maroon-gradient {
+    background: linear-gradient(135deg, #8A202D 0%, #6C1B24 100%);
+  }
+
+  .rose-gradient {
+    background: linear-gradient(135deg, #FFF5F7 0%, #FFE9ED 100%);
+  }
+}
+
+/* Hide Scrollbar completely while preserving smooth scrolling */
+html, body, * {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+*::-webkit-scrollbar,
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+/* Infinite Smooth Marquee Moving Right */
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-right 32s linear infinite;
+}
+
+.animate-marquee-right:hover {
+  animation-play-state: paused;
+}

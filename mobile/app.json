@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Jaigurudev Sadhana",
+    "slug": "jaigurudev-sadhana",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#2B090F"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "org.jaigurudev.sadhana"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2B090F"
+      },
+      "package": "org.jaigurudev.sadhana"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

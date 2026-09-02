@@ -1,0 +1,33 @@
+{
+  "short_name": "जयगुरुदेव",
+  "name": "जयगुरुदेव — Jaigurudev Official Spiritual Platform",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "/pwa-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FAF8EB",
+  "theme_color": "#2B090F",
+  "display": "standalone",
+  "orientation": "portrait"
+}
