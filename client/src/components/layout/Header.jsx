@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Menu, X, Phone, Heart, Calendar, BookOpen, Music, Video, MapPin, Sparkles } from 'lucide-react';
+import { Search, Menu, X, Phone, Heart, Calendar, BookOpen, Music, Video, MapPin, Sparkles, Smartphone } from 'lucide-react';
 import Logo from '../common/Logo';
+import InstallAppGuideModal from '../common/InstallAppGuideModal';
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [installModalOpen, setInstallModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -87,10 +89,20 @@ export const Header = () => {
               <Search className="w-5 h-5" />
             </button>
 
+            {/* Install App Trigger Button */}
+            <button
+              onClick={() => setInstallModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-sacredGold-400 text-maroon-950 hover:bg-sacredGold-500 shadow-xs transition-all hover:scale-105"
+              title="Install Jaigurudev App on iPhone / Android"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Install App</span>
+            </button>
+
             {/* Contact Action */}
             <Link
               to="/contact"
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-maroon-700 to-roseBlush-700 text-white shadow-sm hover:shadow-md hover:from-maroon-800 hover:to-roseBlush-800 transition-all duration-200"
+              className="hidden lg:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-maroon-700 to-roseBlush-700 text-white shadow-sm hover:shadow-md hover:from-maroon-800 hover:to-roseBlush-800 transition-all duration-200"
             >
               <Phone className="w-3.5 h-3.5" />
               <span>Contact</span>
@@ -107,6 +119,12 @@ export const Header = () => {
           </div>
         </div>
       </header>
+
+      {/* Install App Guide Modal (iPhone & Android) */}
+      <InstallAppGuideModal
+        isOpen={installModalOpen}
+        onClose={() => setInstallModalOpen(false)}
+      />
 
       {/* Global Search Modal */}
       {searchOpen && (

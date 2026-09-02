@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Home, Calendar, Video, Bell, Menu, X, Music, Image, HelpCircle, Phone, Info, ScrollText, FileText } from 'lucide-react';
+import { Home, Calendar, Video, Bell, Menu, X, Music, Image, HelpCircle, Phone, Info, ScrollText, FileText, Smartphone, Download } from 'lucide-react';
+import InstallAppGuideModal from '../common/InstallAppGuideModal';
 
 export const MobileBottomNav = () => {
   const [moreDrawerOpen, setMoreDrawerOpen] = useState(false);
+  const [installModalOpen, setInstallModalOpen] = useState(false);
 
   const mainTabs = [
     { name: 'Home', path: '/', icon: Home },
@@ -78,7 +80,33 @@ export const MobileBottomNav = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 py-4 text-center">
+            {/* Install App Quick Banner inside Drawer */}
+            <div className="my-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#2B090F] to-[#450E17] text-white flex items-center justify-between border border-sacredGold-400/50 shadow-md">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-sacredGold-400 text-maroon-950 flex items-center justify-center font-bold">
+                  <Smartphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-sacredGold-200">
+                    जय गुरु देव Official App
+                  </h4>
+                  <p className="text-[10px] text-roseBlush-200 font-light">
+                    iPhone & Android होम स्क्रीन
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setMoreDrawerOpen(false);
+                  setInstallModalOpen(true);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-sacredGold-400 text-maroon-950 font-bold text-[11px] hover:bg-sacredGold-300 shadow-xs"
+              >
+                Install App
+              </button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 py-2 text-center">
               <Link
                 to="/audio"
                 onClick={() => setMoreDrawerOpen(false)}
@@ -148,6 +176,12 @@ export const MobileBottomNav = () => {
           </div>
         </div>
       )}
+
+      {/* Install App Modal */}
+      <InstallAppGuideModal
+        isOpen={installModalOpen}
+        onClose={() => setInstallModalOpen(false)}
+      />
     </>
   );
 };

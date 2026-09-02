@@ -1,23 +1,26 @@
 {
   "expo": {
-    "name": "Jaigurudev Sadhana",
-    "slug": "jaigurudev-sadhana",
+    "name": "जय गुरु देव — Jaigurudev Official",
+    "slug": "jaigurudevukm",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "backgroundColor": "#2B090F"
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FAF8EB"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "org.jaigurudev.sadhana"
+      "bundleIdentifier": "org.jaigurudev.app"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#2B090F"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FAF8EB"
       },
-      "package": "org.jaigurudev.sadhana"
+      "package": "org.jaigurudev.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
