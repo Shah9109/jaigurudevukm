@@ -56,6 +56,16 @@ const adheshSchema = new mongoose.Schema(
       default: true,
       index: true,
     },
+    mediaUrl: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    displayMode: {
+      type: String,
+      enum: ['full', 'link_with_details', 'link_only'],
+      default: 'full',
+    },
   },
   {
     timestamps: true,

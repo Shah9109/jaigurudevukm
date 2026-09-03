@@ -16,6 +16,7 @@ import {
 import api from '../services/api';
 import SEO from '../components/common/SEO';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import SmartMediaPreview from '../components/common/SmartMediaPreview';
 
 const FALLBACK_NOTICES = [
   {
@@ -206,10 +207,37 @@ export const NoticeDetail = () => {
             </h2>
           </div>
 
+          {/* Media / Drive / YouTube Preview */}
+          {notice.mediaUrl && (
+            <div className="pt-2">
+              <SmartMediaPreview
+                url={notice.mediaUrl}
+                title={notice.title}
+                displayMode={notice.displayMode}
+                showEmbedDirectly={true}
+              />
+              {notice.displayMode === 'link_with_details' && (
+                <div className="mt-3">
+                  <a
+                    href={notice.mediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-bold text-xs shadow-xs transition-all"
+                  >
+                    <span>Open External Link / संलग्न लिंक खोलें</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Content Body */}
-          <div className="text-stone-800 text-xs sm:text-sm sm:leading-relaxed whitespace-pre-line space-y-4 pt-2 font-normal">
-            {notice.content}
-          </div>
+          {notice.displayMode !== 'link_only' && (
+            <div className="text-stone-800 text-xs sm:text-sm sm:leading-relaxed whitespace-pre-line space-y-4 pt-2 font-normal">
+              {notice.content}
+            </div>
+          )}
 
           {/* Official Signatory Stamp */}
           <div className="pt-8 border-t border-stone-200 flex flex-col sm:flex-row items-end justify-between gap-4">

@@ -10,11 +10,13 @@ import {
   ShieldCheck,
   Building,
   CheckCircle2,
-  FileCheck
+  FileCheck,
+  ExternalLink
 } from 'lucide-react';
 import api from '../services/api';
 import SEO from '../components/common/SEO';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import SmartMediaPreview from '../components/common/SmartMediaPreview';
 
 const FALLBACK_ADHESH = [
   {
@@ -193,10 +195,37 @@ export const AdheshDetail = () => {
             </h2>
           </div>
 
+          {/* Media / Drive / YouTube Preview */}
+          {adhesh.mediaUrl && (
+            <div className="pt-2">
+              <SmartMediaPreview
+                url={adhesh.mediaUrl}
+                title={adhesh.title}
+                displayMode={adhesh.displayMode}
+                showEmbedDirectly={true}
+              />
+              {adhesh.displayMode === 'link_with_details' && (
+                <div className="mt-3">
+                  <a
+                    href={adhesh.mediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-bold text-xs shadow-xs transition-all"
+                  >
+                    <span>Open External Reference / संलग्न लिंक खोलें</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Directive Text Body */}
-          <div className="text-stone-800 text-xs sm:text-sm sm:leading-relaxed whitespace-pre-line space-y-4 font-normal pt-2">
-            {adhesh.description}
-          </div>
+          {adhesh.displayMode !== 'link_only' && (
+            <div className="text-stone-800 text-xs sm:text-sm sm:leading-relaxed whitespace-pre-line space-y-4 font-normal pt-2">
+              {adhesh.description}
+            </div>
+          )}
 
           {/* Official Seal and Signature */}
           <div className="pt-8 border-t border-stone-200 flex flex-col sm:flex-row items-end justify-between gap-4">

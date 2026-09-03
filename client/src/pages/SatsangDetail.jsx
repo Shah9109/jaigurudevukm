@@ -12,9 +12,11 @@ import {
   ChevronLeft,
   Sparkles,
   AlertCircle,
+  ExternalLink,
 } from 'lucide-react';
 import api from '../services/api';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import SmartMediaPreview from '../components/common/SmartMediaPreview';
 
 export const SatsangDetail = () => {
   const { id } = useParams();
@@ -189,8 +191,33 @@ export const SatsangDetail = () => {
             </div>
           </div>
 
+          {/* Media / Drive / YouTube Preview */}
+          {satsang.mediaUrl && (
+            <div className="pt-2">
+              <SmartMediaPreview
+                url={satsang.mediaUrl}
+                title={satsang.title}
+                displayMode={satsang.displayMode}
+                showEmbedDirectly={true}
+              />
+              {satsang.displayMode === 'link_with_details' && (
+                <div className="mt-3">
+                  <a
+                    href={satsang.mediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-bold text-xs shadow-xs transition-all"
+                  >
+                    <span>Open External Reference / संलग्न लिंक खोलें</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Description */}
-          {satsang.description && (
+          {satsang.displayMode !== 'link_only' && satsang.description && (
             <div className="space-y-3">
               <h3 className="font-serif font-bold text-lg text-stone-900">
                 About this Satsang Program

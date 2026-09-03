@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FileText, Plus, Edit2, Trash2, Search, X, Download } from 'lucide-react';
 import api from '../services/api';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import MediaLinkSettingsField from '../components/admin/MediaLinkSettingsField';
 
 export const AdminAdhesh = () => {
   const [adheshList, setAdheshList] = useState([]);
@@ -71,6 +72,8 @@ export const AdminAdhesh = () => {
       signatory: 'केंद्रीय व्यवस्थापक',
       documentUrl: '',
       category: 'Ashram Order',
+      mediaUrl: '',
+      displayMode: 'full',
     });
     setModalOpen(true);
   };
@@ -84,6 +87,8 @@ export const AdminAdhesh = () => {
       signatory: item.signatory || 'केंद्रीय व्यवस्थापक',
       documentUrl: item.documentUrl || '',
       category: item.category || 'Ashram Order',
+      mediaUrl: item.mediaUrl || '',
+      displayMode: item.displayMode || 'full',
     });
     setModalOpen(true);
   };
@@ -238,6 +243,13 @@ export const AdminAdhesh = () => {
                   className="w-full px-3.5 py-2 text-sm rounded-xl border border-stone-300 focus:outline-hidden resize-none"
                 />
               </div>
+
+              <MediaLinkSettingsField
+                mediaUrl={formData.mediaUrl}
+                displayMode={formData.displayMode}
+                onChangeUrl={(url) => setFormData({ ...formData, mediaUrl: url })}
+                onChangeMode={(mode) => setFormData({ ...formData, displayMode: mode })}
+              />
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-100">
                 <button

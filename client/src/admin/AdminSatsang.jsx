@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Plus, Edit2, Trash2, Search, X, Check, MapPin, Clock, User, AlertCircle } from 'lucide-react';
 import api from '../services/api';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import MediaLinkSettingsField from '../components/admin/MediaLinkSettingsField';
 
 export const AdminSatsang = () => {
   const [satsangs, setSatsangs] = useState([]);
@@ -95,6 +96,8 @@ export const AdminSatsang = () => {
       status: 'upcoming',
       isDaily: false,
       specialInstructions: '',
+      mediaUrl: '',
+      displayMode: 'full',
     });
     setModalOpen(true);
   };
@@ -115,6 +118,8 @@ export const AdminSatsang = () => {
       status: item.status || 'upcoming',
       isDaily: !!item.isDaily,
       specialInstructions: item.specialInstructions || '',
+      mediaUrl: item.mediaUrl || '',
+      displayMode: item.displayMode || 'full',
     });
     setModalOpen(true);
   };
@@ -358,6 +363,13 @@ export const AdminSatsang = () => {
                   className="w-full px-3.5 py-2 text-sm rounded-xl border border-stone-300 focus:outline-hidden resize-none"
                 />
               </div>
+
+              <MediaLinkSettingsField
+                mediaUrl={formData.mediaUrl}
+                displayMode={formData.displayMode}
+                onChangeUrl={(url) => setFormData({ ...formData, mediaUrl: url })}
+                onChangeMode={(mode) => setFormData({ ...formData, displayMode: mode })}
+              />
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-100">
                 <button

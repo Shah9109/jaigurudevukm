@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, MapPin, Phone, User, Calendar, Navigation } from 'lucide-react';
+import { Clock, MapPin, Phone, User, Calendar, Navigation, ExternalLink } from 'lucide-react';
+import SmartMediaPreview from '../common/SmartMediaPreview';
 
 export const SatsangCard = ({ satsang }) => {
   if (!satsang) return null;
@@ -10,9 +11,23 @@ export const SatsangCard = ({ satsang }) => {
   const day = dateObj.getDate();
   const year = dateObj.getFullYear();
 
+  const isLinkOnly = satsang.displayMode === 'link_only' && satsang.mediaUrl;
+  const isLinkWithDetails = satsang.displayMode === 'link_with_details' && satsang.mediaUrl;
+
   return (
     <div className="group bg-white rounded-2xl border border-roseBlush-100 shadow-soft hover:shadow-sacred transition-all duration-300 overflow-hidden flex flex-col justify-between hover:-translate-y-1">
       <div className="p-5 sm:p-6">
+        {/* Media Preview (Google Drive / YouTube / Image) */}
+        {satsang.mediaUrl && (
+          <div className="mb-4">
+            <SmartMediaPreview
+              url={satsang.mediaUrl}
+              title={satsang.title}
+              displayMode={satsang.displayMode}
+            />
+          </div>
+        )}
+
         {/* Top bar: Date Badge & Status */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
@@ -39,7 +54,16 @@ export const SatsangCard = ({ satsang }) => {
 
         {/* Title */}
         <h3 className="text-lg font-serif font-bold text-stone-900 group-hover:text-maroon-700 transition-colors mb-3 line-clamp-2">
-          {satsang.title}
+          {isLinkOnly ? (
+            <a href={satsang.mediaUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-2">
+              <span>{satsang.title}</span>
+              <ExternalLink className="w-4 h-4 text-maroon-700 shrink-0" />
+            </a>
+          ) : (
+            <Link to={`/satsang/${satsang._id || satsang.id || ''}`}>
+              {satsang.title}
+            </Link>
+          )}
         </h3>
 
         {/* Details list */}

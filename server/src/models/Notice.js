@@ -62,6 +62,16 @@ const noticeSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    mediaUrl: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    displayMode: {
+      type: String,
+      enum: ['full', 'link_with_details', 'link_only'],
+      default: 'full',
+    },
   },
   {
     timestamps: true,
