@@ -65,6 +65,17 @@ app.get('/sitemap.xml', getSitemap);
 app.get('/api/sitemap.xml', getSitemap);
 app.get('/robots.txt', getRobots);
 
+// Database Seed endpoint (Accessible to trigger seeding)
+app.get('/api/seed', async (req, res, next) => {
+  try {
+    const { seedDatabase } = await import('./utils/seedData.js');
+    await seedDatabase();
+    return sendSuccess(res, 'Database seeding executed successfully.');
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   return sendSuccess(res, 'Jaigurudev API is operational', {

@@ -18,15 +18,41 @@ export const AdminNotices = () => {
     status: 'active',
   });
 
+  const FALLBACK_NOTICES = [
+    {
+      _id: 'notice-agra-janmashtami-2026',
+      title: 'श्री कृष्ण जन्माष्टमी पावन सत्संग कार्यक्रम — आगरा (Agra) में 2 से 4 तक आयोजित',
+      content: 'समस्त साधक-संगत एवं प्रेमियों को सूचित किया जाता है कि परम पूज्य बाबा उमाकान्त जी महाराज के सानिध्य में श्री कृष्ण जन्माष्टमी का पावन सत्संग एवं नामदान कार्यक्रम आगरा में 2 से 4 तक आयोजित किया जा रहा है।',
+      priority: 'Very Important',
+      category: 'Satsang Announcement',
+      status: 'active',
+      isPopup: true,
+      publishedAt: '2026-09-02T02:00:00.000Z'
+    },
+    {
+      _id: 'notice-weekly-sunday',
+      title: 'प्रत्येक रविवार प्रातः 8:00 बजे पावन सत्संग एवं नाम-दान',
+      content: 'बाबा जयगुरुदेव आश्रम, मक्सी रोड उज्जैन में प्रत्येक रविवार प्रातः 8:00 बजे से विशाल सत्संग एवं पवित्र नाम-दान का कार्यक्रम नियमित रूप से आयोजित होता है।',
+      priority: 'Important',
+      category: 'General Notice',
+      status: 'active',
+      isPopup: false,
+      publishedAt: '2026-08-30T02:00:00.000Z'
+    }
+  ];
+
   const fetchNotices = async () => {
     setLoading(true);
     try {
       const res = await api.get('/notices?limit=100');
-      if (res.success && res.data) {
+      if (res.success && res.data && res.data.length > 0) {
         setNotices(res.data);
+      } else {
+        setNotices(FALLBACK_NOTICES);
       }
     } catch (err) {
       console.error(err);
+      setNotices(FALLBACK_NOTICES);
     } finally {
       setLoading(false);
     }

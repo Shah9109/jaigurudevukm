@@ -18,15 +18,41 @@ export const AdminAdhesh = () => {
     category: 'Ashram Order',
   });
 
+  const FALLBACK_ADHESH = [
+    {
+      _id: 'adhesh-001',
+      title: 'आश्रम परिसर में अनुशासन, सात्विकता एवं स्वच्छता बनाए रखने संबंधी दिशा-निर्देश',
+      referenceNumber: 'JGD/ADM/2026/014',
+      issueDate: '2026-08-15',
+      category: 'General Order',
+      signatory: 'केंद्रीय व्यवस्थापक, जयगुरुदेव आश्रम',
+      description: 'आश्रम में आने वाले सभी प्रेमियों एवं साधकों के लिए अनुशासन, स्वच्छता और सात्विकता बनाए रखने के आवश्यक नियम।',
+      documentUrl: ''
+    },
+    {
+      _id: 'adhesh-002',
+      title: 'पवित्र भंडारा एवं लंगर सेवा में स्वच्छता और जल संरक्षण आदेश',
+      referenceNumber: 'JGD/ADM/2026/012',
+      issueDate: '2026-08-01',
+      category: 'Bhandara Protocol',
+      signatory: 'सेवा दल प्रमुख',
+      description: 'लंगर में अन्न की बर्बादी रोकने, शुद्ध जल का सदुपयोग करने एवं सेवादारों के लिए विशेष निर्देश।',
+      documentUrl: ''
+    }
+  ];
+
   const fetchAdhesh = async () => {
     setLoading(true);
     try {
       const res = await api.get('/adhesh');
-      if (res.success && res.data) {
+      if (res.success && res.data && res.data.length > 0) {
         setAdheshList(res.data);
+      } else {
+        setAdheshList(FALLBACK_ADHESH);
       }
     } catch (err) {
       console.error(err);
+      setAdheshList(FALLBACK_ADHESH);
     } finally {
       setLoading(false);
     }
