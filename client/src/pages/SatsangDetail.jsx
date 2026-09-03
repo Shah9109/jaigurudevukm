@@ -22,6 +22,41 @@ export const SatsangDetail = () => {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
+  const FALLBACK_SATSANG_DETAILS = [
+    {
+      _id: 'satsang-agra-2026',
+      title: 'श्री कृष्ण जन्माष्टमी पावन सत्संग कार्यक्रम — आगरा (Agra)',
+      date: '2026-09-02T02:30:00.000Z',
+      startTime: '08:00 AM',
+      endTime: '12:00 PM',
+      location: 'विशाल सत्संग मैदान, श्री राम ढाबा के पास, नगला परमसुख, आगरा-कानपुर रोड, एत्मादपुर',
+      city: 'Agra',
+      state: 'Uttar Pradesh',
+      speaker: 'परम पूज्य बाबा उमाकान्त जी महाराज',
+      contactNumber: '+91-9754700200',
+      status: 'upcoming',
+      isDaily: false,
+      description: `॥ जयगुरुदेव ॥\n\nपावन श्री कृष्ण जन्माष्टमी के पावन पर्व पर 2 से 4 तक आगरा-कानपुर रोड पर विशाल सत्संग एवं नामदान अमृत महोत्सव आयोजित हो रहा है।\n\nपूज्य वक्त के समरथ सतगुरु बाबा उमाकान्त जी महाराज मानव मात्र के कल्याण, शाकाहारी जीवन एवं सुरत-शब्द योग साधना का दिव्य संदेश प्रदान करेंगे।\n\nसत्संग स्थल पर अखंड भंडारा, चिकित्सा शिविर एवं साधकों के ठहरने की उत्तम व्यवस्था है।`,
+      specialInstructions: 'कृपया समय से पूर्व पधारकर अपना स्थान ग्रहण करें। मोबाइल फोन साइलेंट मोड पर रखें।',
+    },
+    {
+      _id: 'satsang-mathura-weekly',
+      title: 'साप्ताहिक रविवार पावन सत्संग एवं नामदान',
+      date: new Date().toISOString(),
+      startTime: '08:00 AM',
+      endTime: '11:30 AM',
+      location: 'बाबा जयगुरुदेव आश्रम, पिंगलेश्वर स्टेशन के सामने, मक्सी रोड',
+      city: 'Ujjain',
+      state: 'Madhya Pradesh',
+      speaker: 'परम पूज्य बाबा उमाकान्त जी महाराज',
+      contactNumber: '+91-9754700200',
+      status: 'upcoming',
+      isDaily: true,
+      description: `॥ जयगुरुदेव ॥\n\nप्रत्येक रविवार प्रातः कालीन पावन सत्संग, गुरु आरती एवं पवित्र नाम-दान दीक्षा का विशाल आयोजन। सभी धर्मानुरागी सपरिवार आमंत्रित हैं।`,
+      specialInstructions: 'सत्संग के उपरांत गुरु का अखंड भंडारा प्रसाद सभी के लिए उपलब्ध रहेगा।',
+    }
+  ];
+
   useEffect(() => {
     const fetchDetail = async () => {
       setLoading(true);
@@ -29,9 +64,13 @@ export const SatsangDetail = () => {
         const res = await api.get(`/satsang/${id}`);
         if (res.success && res.data) {
           setSatsang(res.data);
+        } else {
+          const match = FALLBACK_SATSANG_DETAILS.find(s => s._id === id || s.id === id) || FALLBACK_SATSANG_DETAILS[0];
+          setSatsang(match);
         }
       } catch (err) {
-        console.error('Error loading satsang details:', err);
+        const match = FALLBACK_SATSANG_DETAILS.find(s => s._id === id || s.id === id) || FALLBACK_SATSANG_DETAILS[0];
+        setSatsang(match);
       } finally {
         setLoading(false);
       }

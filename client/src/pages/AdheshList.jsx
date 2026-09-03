@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, FileText, Download, ShieldCheck, Calendar, User, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Search, FileText, Download, ShieldCheck, Calendar, User, ExternalLink, ArrowRight } from 'lucide-react';
 import api from '../services/api';
 import SectionTitle from '../components/common/SectionTitle';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
@@ -95,27 +96,28 @@ export const AdheshList = () => {
                     हस्ताक्षर / Signatory: <b className="text-stone-800">{item.signatory || 'Sanstha Sachiv'}</b>
                   </span>
 
-                  {item.documentUrl ? (
-                    <a
-                      href={item.documentUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-maroon-700 hover:bg-maroon-800 text-white font-semibold shadow-xs transition-colors"
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to={`/adhesh/${item._id || item.id}`}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-maroon-700 hover:bg-maroon-800 text-white font-semibold text-xs shadow-xs transition-all hover:scale-105"
                     >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Download Official PDF</span>
-                    </a>
-                  ) : item.externalUrl ? (
-                    <a
-                      href={item.externalUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 font-bold text-maroon-700 hover:text-maroon-900"
-                    >
-                      <span>View Official Link</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  ) : null}
+                      <FileText className="w-3.5 h-3.5" />
+                      <span>View Document (आदेश पढ़ें)</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+
+                    {item.documentUrl && (
+                      <a
+                        href={item.documentUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 p-2 rounded-full bg-stone-100 hover:bg-roseBlush-100 text-stone-700 hover:text-maroon-800 transition-colors"
+                        title="Download PDF"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

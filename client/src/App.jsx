@@ -11,7 +11,9 @@ import SatsangDetail from './pages/SatsangDetail';
 import EventsList from './pages/EventsList';
 import EventDetail from './pages/EventDetail';
 import NoticesList from './pages/NoticesList';
+import NoticeDetail from './pages/NoticeDetail';
 import AdheshList from './pages/AdheshList';
+import AdheshDetail from './pages/AdheshDetail';
 import VideoGallery from './pages/VideoGallery';
 import AudioLibrary from './pages/AudioLibrary';
 import PhotoGallery from './pages/PhotoGallery';
@@ -59,7 +61,9 @@ export default function App() {
           <Route path="events" element={<EventsList />} />
           <Route path="events/:slugOrId" element={<EventDetail />} />
           <Route path="notices" element={<NoticesList />} />
+          <Route path="notices/:id" element={<NoticeDetail />} />
           <Route path="adhesh" element={<AdheshList />} />
+          <Route path="adhesh/:id" element={<AdheshDetail />} />
           <Route path="videos" element={<VideoGallery />} />
           <Route path="audio" element={<AudioLibrary />} />
           <Route path="gallery" element={<PhotoGallery />} />

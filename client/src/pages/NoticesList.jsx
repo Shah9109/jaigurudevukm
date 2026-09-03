@@ -384,17 +384,28 @@ export const NoticesList = () => {
                       </div>
                     </div>
 
-                    {adhesh.attachmentUrl && (
-                      <a
-                        href={adhesh.attachmentUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-roseBlush-100 hover:bg-maroon-700 hover:text-white text-maroon-800 font-bold text-xs transition-all shrink-0 shadow-xs"
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Link
+                        to={`/adhesh/${adhesh._id || adhesh.id}`}
+                        className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-maroon-700 to-roseBlush-700 hover:from-maroon-800 hover:to-roseBlush-800 text-white font-bold text-xs transition-all shadow-xs"
                       >
-                        <Download className="w-4 h-4" />
-                        <span>Download PDF / आदेश देखें</span>
-                      </a>
-                    )}
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>View Document (आदेश पढ़ें)</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+
+                      {adhesh.attachmentUrl && (
+                        <a
+                          href={adhesh.attachmentUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-stone-100 hover:bg-roseBlush-100 text-stone-700 hover:text-maroon-800 transition-colors shadow-2xs"
+                          title="Download PDF"
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
