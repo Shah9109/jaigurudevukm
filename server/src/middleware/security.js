@@ -17,18 +17,38 @@ export const corsMiddleware = cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (such as mobile apps, curl, postman)
     if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
+
+    const cleanOrigin = origin.replace(/\/+$/, '');
+
+    // Collect configured allowed origins
+    const configuredOrigins = (process.env.CLIENT_URL || '')
+      .split(',')
+      .map((s) => s.trim().replace(/\/+$/, ''))
+      .filter(Boolean);
+
+    const staticAllowedOrigins = [
       'http://localhost:5173',
       'http://localhost:3000',
       'http://127.0.0.1:5173',
-      process.env.CLIENT_URL,
-    ].filter(Boolean);
+      'https://jaigurudevukm-client.vercel.app',
+      'https://jaigurudevukm.vercel.app',
+      'https://jaigurudev.org',
+      'https://www.jaigurudev.org',
+      ...configuredOrigins,
+    ];
 
-    if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
+    // Allow development, exact matches, or any *.vercel.app domain
+    const isVercelDomain = /^https?:\/\/.*\.vercel\.app$/.test(cleanOrigin);
+    const isAllowed =
+      process.env.NODE_ENV === 'development' ||
+      staticAllowedOrigins.includes(cleanOrigin) ||
+      isVercelDomain;
+
+    if (isAllowed) {
       return callback(null, true);
     }
-    return callback(new Error('CORS blocked origin'));
+
+    return callback(new Error(`CORS blocked origin: ${origin}`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

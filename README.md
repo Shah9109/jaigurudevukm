@@ -90,9 +90,9 @@ npm --prefix mobile install
 
 #### Server (`server/.env`):
 ```env
-PORT=5000
+PORT=5001
 NODE_ENV=development
-CLIENT_URL=http://localhost:5173
+CLIENT_URL=http://localhost:5173,https://jaigurudevukm-client.vercel.app
 MONGODB_URI=mongodb+srv://sanjayshah910930_db_user:q3wpXjoCqgOlbC2R@cluster0.kln1oaq.mongodb.net/?appName=Cluster0
 JWT_SECRET=jaigurudev_sacred_jwt_secret_key_2026_prod
 JWT_EXPIRES_IN=7d
@@ -102,7 +102,9 @@ INITIAL_ADMIN_PASSWORD=JaigurudevAdmin@2026
 
 #### Client (`client/.env`):
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_BASE_URL=http://localhost:5001/api
+# In Vercel Production Environment Variables:
+# VITE_API_BASE_URL=https://jaigurudevukm.onrender.com/api
 ```
 
 ---

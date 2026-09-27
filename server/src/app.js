@@ -4,6 +4,7 @@ import compression from 'compression';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import mongoose from 'mongoose';
 
 import { helmetMiddleware, corsMiddleware, generalLimiter } from './middleware/security.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
@@ -78,8 +79,12 @@ app.get('/api/seed', async (req, res, next) => {
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const dbStatusMap = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
   return sendSuccess(res, 'Jaigurudev API is operational', {
     status: 'healthy',
+    database: dbStatusMap[dbState] || 'unknown',
+    databaseConnected: dbState === 1,
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     version: '1.0.0',
