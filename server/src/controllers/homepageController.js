@@ -9,6 +9,7 @@ import {
   Gallery,
 } from '../models/index.js';
 import { sendSuccess } from '../utils/apiResponse.js';
+import { getCachedYouTubeData } from '../services/youtubeScraper.js';
 
 /**
  * Get aggregated dynamic homepage payload
@@ -172,6 +173,30 @@ export const getHomepageData = async (req, res, next) => {
           expectedAttendees: '2,50,000+ श्रद्धालु',
         },
       ];
+    }
+
+    // Populate from real YouTube channel data if database videos are empty or fewer than 3
+    if (!featuredVideos || featuredVideos.length < 3) {
+      const ytData = getCachedYouTubeData();
+      if (ytData?.videos?.length > 0) {
+        const ytFormatted = ytData.videos.slice(0, 6).map((v) => ({
+          _id: v.id,
+          id: v.id,
+          videoId: v.videoId,
+          youtubeId: v.videoId,
+          title: v.title,
+          description: v.title,
+          thumbnailUrl: v.thumbnail,
+          thumbnail: v.thumbnail,
+          duration: v.duration,
+          category: v.category || 'Satsang Discourse',
+          speaker: 'परम संत बाबा उमाकान्त जी महाराज',
+          videoType: 'youtube',
+          views: v.views,
+          publishedDate: v.publishedDate,
+        }));
+        featuredVideos = featuredVideos?.length > 0 ? [...featuredVideos, ...ytFormatted].slice(0, 6) : ytFormatted;
+      }
     }
 
     return sendSuccess(res, 'Homepage dynamic content retrieved successfully', {

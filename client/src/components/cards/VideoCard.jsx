@@ -6,42 +6,49 @@ export const VideoCard = ({ video }) => {
 
   if (!video) return null;
 
-  const getYoutubeEmbedUrl = (idOrUrl) => {
-    if (video.youtubeId) {
-      return `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1`;
+  const ytId = video.youtubeId || video.videoId || video.id;
+
+  const getYoutubeEmbedUrl = () => {
+    if (ytId) {
+      return `https://www.youtube.com/embed/${ytId}?autoplay=1`;
     }
     return video.videoUrl;
   };
 
+  const thumbUrl =
+    video.thumbnailUrl ||
+    video.thumbnail ||
+    (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : '/images/baba_jaigurudev.jpg');
+
   return (
     <>
-      <div className="group bg-white rounded-2xl border border-roseBlush-100 shadow-soft hover:shadow-sacred transition-all duration-300 overflow-hidden flex flex-col justify-between hover:-translate-y-1">
+      <div className="group bg-white rounded-3xl border border-roseBlush-200 shadow-soft hover:shadow-sacred transition-all duration-300 overflow-hidden flex flex-col justify-between hover:-translate-y-1">
         {/* Thumbnail with Play Button */}
         <div
           onClick={() => setModalOpen(true)}
-          className="relative h-48 sm:h-52 w-full bg-stone-900 cursor-pointer overflow-hidden"
+          className="relative aspect-video w-full bg-stone-900 cursor-pointer overflow-hidden"
         >
           <img
-            src={video.thumbnailUrl || `https://img.youtube.com/vi/${video.youtubeId || 'dQw4w9WgXcQ'}/hqdefault.jpg`}
+            src={thumbUrl}
             alt={video.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
           />
-          
+
           {/* Overlay & Central Play Button */}
           <div className="absolute inset-0 bg-black/25 group-hover:bg-black/10 flex items-center justify-center transition-colors">
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-maroon-700 to-roseBlush-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-red-600 group-hover:bg-red-500 text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
               <Play className="w-6 h-6 fill-white ml-0.5" />
             </div>
           </div>
 
           {video.duration && (
-            <div className="absolute bottom-2.5 right-2.5 bg-black/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1">
+            <div className="absolute bottom-2.5 right-2.5 bg-black/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1 font-mono">
               <Clock className="w-3 h-3" />
               <span>{video.duration}</span>
             </div>
           )}
 
-          <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-xs text-maroon-900 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">
+          <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-xs text-maroon-900 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase shadow-xs">
             {video.category || 'Discourse'}
           </div>
         </div>
@@ -94,9 +101,9 @@ export const VideoCard = ({ video }) => {
               </button>
             </div>
             <div className="relative aspect-video w-full bg-black">
-              {video.videoType === 'youtube' || video.youtubeId ? (
+              {ytId || video.videoType === 'youtube' ? (
                 <iframe
-                  src={getYoutubeEmbedUrl(video.youtubeId)}
+                  src={getYoutubeEmbedUrl()}
                   title={video.title}
                   className="w-full h-full border-0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

@@ -15,6 +15,8 @@ import {
   Play,
   Smartphone,
   CheckCircle2,
+  Youtube,
+  ExternalLink,
 } from 'lucide-react';
 import api from '../services/api';
 import HeroBanner from '../components/common/HeroBanner';
@@ -29,18 +31,26 @@ import LiveStreamsMarquee from '../components/common/LiveStreamsMarquee';
 
 export const Home = () => {
   const [data, setData] = useState(null);
+  const [youtubeVideos, setYoutubeVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeAudio, setActiveAudio] = useState(null);
 
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const res = await api.get('/homepage');
-        if (res.success && res.data) {
-          setData(res.data);
+        const [homeRes, ytRes] = await Promise.allSettled([
+          api.get('/homepage'),
+          api.get('/youtube-channel')
+        ]);
+
+        if (homeRes.status === 'fulfilled' && homeRes.value?.success && homeRes.value?.data) {
+          setData(homeRes.value.data);
+        }
+        if (ytRes.status === 'fulfilled' && ytRes.value?.success && ytRes.value?.data?.videos) {
+          setYoutubeVideos(ytRes.value.data.videos.slice(0, 3));
         }
       } catch (err) {
-        console.warn('Using local fallback for homepage:', err.message);
+        console.warn('Using fallback for homepage data:', err.message);
       } finally {
         setLoading(false);
       }
@@ -53,7 +63,9 @@ export const Home = () => {
   const notices = data?.notices || [];
   const adheshList = data?.adheshList || [];
   const upcomingEvents = data?.upcomingEvents || [];
-  const featuredVideos = data?.featuredVideos || [];
+  const featuredVideos = (data?.featuredVideos && data.featuredVideos.length > 0)
+    ? data.featuredVideos
+    : (youtubeVideos.length > 0 ? youtubeVideos : []);
   const featuredAudio = data?.featuredAudio || [];
   const siteSettings = data?.settings || {};
 
@@ -232,32 +244,48 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* 5. FEATURED VIDEO DISCOURSES */}
+      {/* 5. FEATURED VIDEO DISCOURSES FROM OFFICIAL YOUTUBE CHANNEL */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-8">
-          <div>
-            <span className="font-devanagari text-maroon-700 font-bold text-sm tracking-wider uppercase inline-block mb-1 px-3 py-1 bg-roseBlush-100/70 rounded-full">
-              अमृत प्रवचन
-            </span>
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 border border-red-200/80 rounded-full text-red-700 text-xs font-bold">
+              <Youtube className="w-3.5 h-3.5 text-red-600" />
+              <span>आधिकारिक यूट्यूब चैनल @Jaigurudevukm</span>
+            </div>
             <h2 className="text-2xl sm:text-3.5xl font-serif font-bold text-stone-900">
               Featured Video Discourses
             </h2>
+            <p className="text-xs sm:text-sm text-stone-600 font-light max-w-xl">
+              परम पूज्य बाबा उमाकान्त जी महाराज के पावन अमृत वचन एवं विशेष सत्संग प्रवचन — सीधे आधिकारिक यूट्यूब चैनल से।
+            </p>
           </div>
-          <Link
-            to="/videos"
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-maroon-700 hover:text-maroon-900 shrink-0"
-          >
-            <span>Watch All Videos</span>
-            <ChevronRight className="w-4 h-4" />
-          </Link>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              to="/videos"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-maroon-700 hover:bg-maroon-800 text-white text-xs font-bold transition-all shadow-sm"
+            >
+              <span>Watch All Videos</span>
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+            <a
+              href="https://www.youtube.com/@Jaigurudevukm"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-sm"
+            >
+              <Youtube className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Subscribe</span>
+            </a>
+          </div>
         </div>
 
         {loading ? (
           <LoadingSkeleton count={3} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredVideos.map((video) => (
-              <VideoCard key={video._id || video.id} video={video} />
+            {featuredVideos.slice(0, 3).map((video) => (
+              <VideoCard key={video._id || video.id || video.videoId} video={video} />
             ))}
           </div>
         )}
