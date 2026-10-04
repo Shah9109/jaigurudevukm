@@ -153,7 +153,7 @@ export const SantVanshavaliMarquee = () => {
               </span>
 
               {/* Guru Portrait */}
-              <div className="w-full h-34 sm:h-42 rounded-xl overflow-hidden bg-stone-100 border border-sacredGold-200 mb-2 relative">
+              <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-stone-100 border border-sacredGold-200 mb-2 relative shadow-xs">
                 <img
                   src={guru.image}
                   alt={guru.name}
