@@ -138,7 +138,7 @@ export const HomeScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('AshramGuide')}
           >
             <Text style={styles.quickIcon}>🏛️</Text>
-            <Text style={styles.quickTitle}>मथुरा आश्रम निर्देशिका</Text>
+            <Text style={styles.quickTitle}>उज्जैन आश्रम निर्देशिका</Text>
             <Text style={styles.quickSubtitle}>Helpline & Guide</Text>
           </TouchableOpacity>
         </View>

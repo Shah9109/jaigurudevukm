@@ -42,7 +42,7 @@ export const SatsangDetail = () => {
       specialInstructions: 'कृपया समय से पूर्व पधारकर अपना स्थान ग्रहण करें। मोबाइल फोन साइलेंट मोड पर रखें।',
     },
     {
-      _id: 'satsang-mathura-weekly',
+      _id: 'satsang-ujjain-weekly',
       title: 'साप्ताहिक रविवार पावन सत्संग एवं नामदान',
       date: new Date().toISOString(),
       startTime: '08:00 AM',

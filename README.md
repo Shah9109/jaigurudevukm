@@ -1,6 +1,6 @@
 # ॥ जयगुरुदेव ॥ Jaigurudev Full-Stack Spiritual Platform & Mobile Ecosystem
 
-A comprehensive, production-ready, full-stack digital ecosystem built for **Jaigurudev Sanstha (Mathura Ashram)**. Designed with clean architecture, high visual aesthetics, 100% offline-tolerant database connection, an administrative CMS with full content control, an integrated Knowledge AI assistant, and an offline-first companion mobile app.
+A comprehensive, production-ready, full-stack digital ecosystem built for **Jaigurudev Sanstha (Baba Jaigurudev Ashram, Ujjain)**. Designed with clean architecture, high visual aesthetics, 100% offline-tolerant database connection, an administrative CMS with full content control, an integrated Knowledge AI assistant, and an offline-first companion mobile app.
 
 ---
 
@@ -65,7 +65,7 @@ jaigurudevukm/
 - **Meditation Timer:** Configurable durations (15m, 30m, 45m, 1h, 2h, 3h) with haptic 15-minute interval reminder chimes.
 - **Daily Discipline Checklist:** Amrit Vela (03:00–05:00 AM) and Sandhya Aarti checkboxes + Lifetime Vegetarianism pledge.
 - **Offline Liturgy & Prayers:** Complete Hindi Devanagari texts for Morning Prayers, Evening Aarti, Naam-Dhun, and Sakhis with font scaling (`A-` / `A+`).
-- **Ashram Visitor Guide:** One-tap dialing to the Mathura Central Ashram office and Google Maps directions.
+- **Ashram Visitor Guide:** One-tap dialing to the Baba Jaigurudev Ashram Ujjain office and Google Maps directions.
 
 ---
 
@@ -146,4 +146,4 @@ npm --prefix server test
 ---
 
 ## 🏛️ License & Copyright
-Developed for **Jaigurudev Sanstha (Mathura Ashram)**. Dedicated to spiritual enlightenment, vegetarianism, non-violence, and universal human welfare.
+Developed for **Jaigurudev Sanstha (Baba Jaigurudev Ashram, Ujjain)**. Dedicated to spiritual enlightenment, vegetarianism, non-violence, and universal human welfare.

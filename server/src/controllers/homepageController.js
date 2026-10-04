@@ -61,7 +61,7 @@ export const getHomepageData = async (req, res, next) => {
           startTime: '08:00 AM - 12:00 PM & 05:00 PM - 08:30 PM',
           endTime: '08:30 PM',
           location: 'विशाल सत्संग मैदान, आगरा',
-          address: 'आगरा-मथुरा मार्ग, आगरा',
+          address: 'विशाल सत्संग मैदान, आगरा',
           city: 'आगरा (Agra)',
           state: 'उत्तर प्रदेश (Uttar Pradesh)',
           speaker: 'परम पूज्य बाबा उमाकान्त जी महाराज',

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 export const SEO = ({
   title = 'जयगुरुदेव — Jaigurudev Sanstha | Official Spiritual Platform',
   description = 'Official spiritual portal of Jaigurudev Sanstha. Daily Satsang updates, Ashram Adhesh, spiritual teachings, audio/video discourses, and events.',
-  keywords = 'Jaigurudev, Satsang, Mathura Ashram, Surat Shabd Yoga, Shakahar, Bhajan, Adhesh',
+  keywords = 'Jaigurudev, Satsang, Ujjain Ashram, Surat Shabd Yoga, Shakahar, Bhajan, Adhesh',
   ogImage = '/logo.svg',
   canonicalUrl,
 }) => {
@@ -58,17 +58,17 @@ export const SEO = ({
       logo: 'https://jaigurudev.org/logo.svg',
       contactPoint: {
         '@type': 'ContactPoint',
-        telephone: '+91-9876543210',
+        telephone: '+91-9754700200',
         contactType: 'Office Helpline',
         areaServed: 'IN',
         availableLanguage: ['Hindi', 'English'],
       },
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Jaigurudev Ashram, NH-19',
-        addressLocality: 'Mathura',
-        addressRegion: 'Uttar Pradesh',
-        postalCode: '281001',
+        streetAddress: 'Baba Jaigurudev Ashram, Opp. Pingleshwar Railway Station, Maksi Road',
+        addressLocality: 'Ujjain',
+        addressRegion: 'Madhya Pradesh',
+        postalCode: '456661',
         addressCountry: 'IN',
       },
     };

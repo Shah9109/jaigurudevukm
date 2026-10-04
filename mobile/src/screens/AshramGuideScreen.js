@@ -22,7 +22,7 @@ export const AshramGuideScreen = () => {
   };
 
   const openMap = () => {
-    const url = 'https://www.google.com/maps/search/?api=1&query=Jaigurudev+Ashram+Mathura+NH-19';
+    const url = 'https://maps.app.goo.gl/yMMis5r5gCwEPPKT7?g_st=ic';
     Linking.openURL(url).catch(() => {});
   };
 
@@ -45,16 +45,16 @@ export const AshramGuideScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.sacredHeading}>॥ मथुरा आश्रम निर्देशिका ॥</Text>
-          <Text style={styles.subHeading}>Mathura Ashram Visitor Guide & Helplines</Text>
+          <Text style={styles.sacredHeading}>॥ उज्जैन आश्रम निर्देशिका ॥</Text>
+          <Text style={styles.subHeading}>Ujjain Ashram Visitor Guide & Helplines</Text>
         </View>
 
         {/* Central Ashram Card */}
         <View style={styles.heroCard}>
           <Text style={styles.heroSacred}>मुख्य पावन तपोभूमि</Text>
-          <Text style={styles.heroTitle}>जयगुरुदेव आश्रम, मथुरा (उ.प्र.)</Text>
+          <Text style={styles.heroTitle}>बाबा जयगुरुदेव आश्रम, उज्जैन (म.प्र.)</Text>
           <Text style={styles.heroAddress}>
-            मथुरा-दिल्ली राष्ट्रीय राजमार्ग (NH-19), मथुरा, उत्तर प्रदेश - 281001
+            बाबा जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड, उज्जैन (म.प्र.) - 456661
           </Text>
 
           <TouchableOpacity style={styles.mapBtn} onPress={openMap}>
@@ -68,28 +68,28 @@ export const AshramGuideScreen = () => {
 
           <TouchableOpacity
             style={styles.contactRow}
-            onPress={() => dialPhone('+919876543210')}
+            onPress={() => dialPhone('+919754700200')}
           >
             <View style={styles.phoneIconBox}>
               <Text style={styles.phoneIcon}>📞</Text>
             </View>
             <View style={styles.contactText}>
               <Text style={styles.contactTitle}>केंद्रीय कार्यालय (Central Office)</Text>
-              <Text style={styles.contactNumber}>+91-9876543210</Text>
+              <Text style={styles.contactNumber}>+91-9754700200</Text>
             </View>
             <Text style={styles.callBadge}>कॉल करें</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.contactRow}
-            onPress={() => dialPhone('+919876543211')}
+            onPress={() => dialPhone('+919575600700')}
           >
             <View style={styles.phoneIconBox}>
               <Text style={styles.phoneIcon}>📞</Text>
             </View>
             <View style={styles.contactText}>
               <Text style={styles.contactTitle}>आवास एवं लंगर व्यवस्था (Accommodation)</Text>
-              <Text style={styles.contactNumber}>+91-9876543211</Text>
+              <Text style={styles.contactNumber}>+91-9575600700</Text>
             </View>
             <Text style={styles.callBadge}>कॉल करें</Text>
           </TouchableOpacity>

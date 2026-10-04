@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, Heart, ShieldCheck, TreePine, Users, Award, BookOpen, MapPin } from 'lucide-react';
+import { Sparkles, Heart, ShieldCheck, TreePine, Users, Award, BookOpen, MapPin, Phone, ExternalLink } from 'lucide-react';
 import SectionTitle from '../components/common/SectionTitle';
 
 export const AboutUs = () => {
@@ -25,7 +25,7 @@ export const AboutUs = () => {
               सत्य, दया, धर्म और नाम-साधना की पावन ज्योति
             </h2>
             <p className="text-sm sm:text-base text-stone-600 font-light leading-relaxed">
-              जयगुरुदेव धर्म प्रचारक संस्था का प्रादुर्भाव संपूर्ण मानव समाज को अज्ञान, आडंबर और भौतिक दुःखों से निकालकर आत्मिक शांति, सदाचार और ईश्वर-प्राप्ति के पावन मार्ग पर अग्रसर करने हेतु हुआ है। मथुरा (उत्तर प्रदेश) स्थित मुख्य आश्रम विश्व भर के लाखों साधकों और जिज्ञासुओं के लिए आध्यात्मिक साधना एवं सेवा का महान केंद्र है।
+              जयगुरुदेव धर्म प्रचारक संस्था का प्रादुर्भाव संपूर्ण मानव समाज को अज्ञान, आडंबर और भौतिक दुःखों से निकालकर आत्मिक शांति, सदाचार और ईश्वर-प्राप्ति के पावन मार्ग पर अग्रसर करने हेतु हुआ है। बाबा जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड, उज्जैन (म.प्र.) स्थित मुख्य आश्रम विश्व भर के लाखों साधकों और जिज्ञासुओं के लिए आध्यात्मिक साधना एवं सेवा का महान केंद्र है।
             </p>
           </div>
         </div>
@@ -74,7 +74,7 @@ export const AboutUs = () => {
                   </Link>
                 </h3>
                 <p className="text-xs text-stone-600 font-light leading-relaxed line-clamp-3">
-                  भारतवर्ष के महान युग-प्रवर्तक सन्त, शाकाहार क्रांति एवं नाम-साधना के प्रणेता जिन्होंने मथुरा आश्रम की पावन नींव रखी।
+                  भारतवर्ष के महान युग-प्रवर्तक सन्त, शाकाहार क्रांति एवं नाम-साधना के प्रणेता जिन्होंने पावन संत परंपरा एवं नाम-साधना की दिव्य नींव रखी।
                 </p>
                 <div className="pt-1">
                   <Link
@@ -239,17 +239,41 @@ export const AboutUs = () => {
           </div>
         </div>
 
-        {/* Mathura Ashram Section */}
+        {/* Ujjain Ashram Section */}
         <div className="p-8 sm:p-12 rounded-3xl bg-white border border-roseBlush-200 shadow-soft space-y-6">
           <div className="flex items-center gap-3">
-            <MapPin className="w-6 h-6 text-maroon-700" />
-            <h3 className="text-2xl font-serif font-bold text-stone-900">
-              Mathura Central Ashram (मथुरा मुख्य आश्रम)
-            </h3>
+            <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+              <MapPin className="w-6 h-6" />
+            </div>
+            <div>
+              <span className="font-devanagari text-xs font-bold text-sacredGold-700 uppercase tracking-widest bg-sacredGold-50 px-2.5 py-0.5 rounded-full border border-sacredGold-200 block w-fit mb-1">
+                ॥ मुख्य पावन तपोभूमि ॥
+              </span>
+              <h3 className="text-xl sm:text-2xl font-serif font-bold text-stone-900">
+                बाबा जयगुरुदेव आश्रम, उज्जैन (म.प्र.)
+              </h3>
+            </div>
           </div>
+
+          <div className="p-4 rounded-2xl bg-roseBlush-50/60 border border-roseBlush-200 text-stone-800 text-sm font-medium">
+            <span className="font-bold text-maroon-900 block mb-1">आश्रम का आधिकारिक पता:</span>
+            बाबा जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड, उज्जैन (म.प्र.) PIN: 456661
+          </div>
+
           <p className="text-sm sm:text-base text-stone-600 leading-relaxed font-light">
-            मथुरा-दिल्ली राष्ट्रीय राजमार्ग (NH-19) पर स्थित जयगुरुदेव आश्रम एक विशाल एवं शांत आध्यात्मिक तपोभूमि है। यहाँ भव्य नाम-साधना मंदिर, अखंड सत्संग भवन, दर्शनार्थियों के लिए विशाल आवास भवन, निशुल्क चिकित्सालय और गौशाला स्थित है। प्रत्येक रविवार तथा वार्षिक भंडारा उत्सवों पर लाखों श्रद्धालु यहाँ आत्मिक शांति प्राप्त करते हैं।
+            बाबा जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड, उज्जैन (म.प्र.) पर स्थित एक विशाल एवं शांत आध्यात्मिक तपोभूमि है। यहाँ भव्य नाम-साधना मंदिर, अखंड सत्संग भवन, दर्शनार्थियों के लिए विशाल आवास भवन, निशुल्क चिकित्सालय और गौशाला स्थित है। प्रत्येक रविवार तथा वार्षिक भंडारा उत्सवों पर लाखों श्रद्धालु यहाँ आत्मिक शांति प्राप्त करते हैं।
           </p>
+
+          <div className="flex flex-wrap items-center gap-4 text-xs text-stone-600">
+            <span className="inline-flex items-center gap-1.5 font-bold text-maroon-900 bg-stone-100 px-3 py-1.5 rounded-full">
+              <Phone className="w-3.5 h-3.5 text-maroon-700" />
+              +91-9754700200 / +91-9575600700
+            </span>
+            <span className="text-stone-500 font-devanagari">
+              कार्यालय समय: प्रातः 06:00 से सायं 08:00 बजे तक (दैनिक)
+            </span>
+          </div>
+
           <div className="pt-2 flex flex-wrap gap-4">
             <Link
               to="/satsang"
@@ -263,6 +287,15 @@ export const AboutUs = () => {
             >
               Contact Ashram Office
             </Link>
+            <a
+              href="https://maps.app.goo.gl/yMMis5r5gCwEPPKT7?g_st=ic"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold text-xs transition-colors shadow-sm"
+            >
+              <span>Open in Google Maps</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
           </div>
         </div>
       </div>

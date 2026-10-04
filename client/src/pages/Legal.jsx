@@ -54,7 +54,7 @@ export const Legal = () => {
                 <b>Official Disclaimer:</b> This portal represents the official online informational presence of Jaigurudev Sanstha. All guidelines and instructions are published under the authority of the Ashram management.
               </p>
               <p>
-                Devotees are advised to verify satsang schedules and travel guidelines directly from this official portal or by contacting the Mathura Ashram office.
+                Devotees are advised to verify satsang schedules and travel guidelines directly from this official portal or by contacting the Ujjain Ashram office.
               </p>
             </>
           )}

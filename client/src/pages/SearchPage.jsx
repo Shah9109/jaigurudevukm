@@ -70,7 +70,7 @@ export const SearchPage = () => {
           <Search className="w-5 h-5 text-stone-400 ml-2 shrink-0" />
           <input
             type="text"
-            placeholder="Search keywords (e.g. Satsang, Mathura, Bhandara, Adhesh)..."
+            placeholder="Search keywords (e.g. Satsang, Ujjain, Bhandara, Adhesh)..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full text-sm sm:text-base text-stone-800 placeholder-stone-400 bg-transparent focus:outline-hidden"

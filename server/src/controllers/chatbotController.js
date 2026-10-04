@@ -67,7 +67,7 @@ export const handleChatMessage = async (req, res, next) => {
     if (tokens.some((t) => ['contact', 'address', 'phone', 'helpline', 'पता', 'स्थान', 'फोन', 'नंबर', 'मथुरा', 'mathura', 'ujjain', 'उज्जैन'].includes(t))) {
       const settings = await SiteSettings.findOne();
       const phone = settings?.contactInfo?.phone || '+91-9754700200';
-      const address = settings?.contactInfo?.address || 'जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड, उज्जैन तथा मथुरा आश्रम (NH-19)';
+      const address = settings?.contactInfo?.address || 'बाबा जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड, उज्जैन (म.प्र.) PIN: 456661';
 
       const replyText = `जयगुरुदेव! आश्रम का मुख्य पता एवं संपर्क विवरण:\n\n📍 **पता:** ${address}\n📞 **हेल्पलाइन:** ${phone}\n⏰ **कार्यालय समय:** प्रातः 06:00 से सायं 08:00 बजे तक।\n\nआप किसी भी दिन आश्रम पधार सकते हैं। भोजन एवं आवास की निशुल्क व्यवस्था है।`;
       return sendSuccess(res, 'Answer compiled from ashram contact', {

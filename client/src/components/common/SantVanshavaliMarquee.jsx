@@ -108,7 +108,7 @@ const GURUS_VANSHAVALI = [
     id: 18,
     name: 'बाबा जयगुरुदेव जी महाराज',
     image: '/images/gurus/guru_18_baba_jaigurudev_ji.jpg',
-    era: 'मथुरा आश्रम',
+    era: 'संस्थापक सन्त सतगुरु',
   },
   {
     id: 19,

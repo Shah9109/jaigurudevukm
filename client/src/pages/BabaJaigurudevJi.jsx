@@ -25,7 +25,7 @@ export const BabaJaigurudevJi = () => {
       <SEO
         title="परम संत बाबा जयगुरुदेव जी महाराज का पावन जीवन परिचय — Jaigurudev"
         description="विश्व विख्यात परम संत बाबा जयगुरुदेव जी महाराज का पावन जीवन परिचय, बाल्यावस्था, दादा गुरु घूरेलाल जी से मिलाप, साधना, शाकाहार क्रांति एवं 10 अमर संदेश।"
-        keywords="Baba Jaigurudev Ji Maharaj, Life History, Ghurelal Ji Maharaj, Chirauli Aligarh, Surat Shabd Yoga, Naamdan, Mathura Ashram"
+        keywords="Baba Jaigurudev Ji Maharaj, Life History, Ghurelal Ji Maharaj, Chirauli Aligarh, Surat Shabd Yoga, Naamdan, Ujjain Ashram"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -77,7 +77,7 @@ export const BabaJaigurudevJi = () => {
                   परम पूज्य बाबा जयगुरुदेव जी महाराज
                 </h3>
                 <p className="text-xs text-stone-600 font-medium">
-                  संस्थापक — जयगुरुदेव धर्म प्रचारक संस्था, मथुरा
+                  संस्थापक — जयगुरुदेव धर्म प्रचारक संस्था
                 </p>
               </div>
             </div>

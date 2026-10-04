@@ -82,7 +82,7 @@ async function runSystemVerification() {
       await testEndpoint('AI Chatbot Query (Ashram Address)', '/api/chatbot/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'मथुरा आश्रम का पता' }),
+        body: JSON.stringify({ message: 'उज्जैन आश्रम का पता' }),
       });
 
       // 7. Admin Authentication & Protected Endpoints

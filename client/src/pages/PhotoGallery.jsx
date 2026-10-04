@@ -12,7 +12,7 @@ export const PhotoGallery = () => {
 
   // Sample static photo fallback if albums collection is developing
   const samplePhotos = [
-    { url: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80', caption: 'मथुरा मुख्य आश्रम प्रांगण दर्शन', category: 'Ashram Darshan' },
+    { url: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80', caption: 'बाबा जयगुरुदेव आश्रम उज्जैन प्रांगण दर्शन', category: 'Ashram Darshan' },
     { url: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80', caption: 'वार्षिक पावन भंडारा संत समागम', category: 'Bhandara & Utsav' },
     { url: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=800&q=80', caption: 'प्रातः कालीन नाम-साधना एवं आरती', category: 'Satsang Samagam' },
     { url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80', caption: 'जीव दया एवं शाकाहार रथ यात्रा', category: 'Seva & Charity' },

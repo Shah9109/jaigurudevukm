@@ -91,7 +91,7 @@ export const SatsangList = () => {
               <Search className="w-5 h-5 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search by city, venue, or speaker (e.g. Mathura, Agra)..."
+                placeholder="Search by city, venue, or speaker (e.g. Ujjain, Indore)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-11 pr-4 py-2.5 rounded-2xl bg-roseBlush-50/50 text-stone-800 placeholder-stone-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-roseBlush-300"
