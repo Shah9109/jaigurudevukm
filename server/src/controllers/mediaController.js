@@ -194,11 +194,54 @@ export const getLiveNowStatus = async (req, res, next) => {
   }
 };
 
-// Fetch streams endpoint
+// Fetch streams endpoint (strictly latest 10 videos/streams from today backwards)
 export const getYouTubeStreams = async (req, res, next) => {
   try {
     const data = cachedChannelData || getCachedYouTubeData() || DEFAULT_CHANNEL_DATA;
-    return sendSuccess(res, 'YouTube streams', data.streams || []);
+    const map = new Map();
+    const allItems = [...(data.videos || []), ...(data.streams || [])];
+
+    for (const item of allItems) {
+      const vid = item.videoId || item.id;
+      if (!vid) continue;
+      if (!map.has(vid)) {
+        map.set(vid, item);
+      } else {
+        const existing = map.get(vid);
+        if (!existing.publishedAt && item.publishedAt) {
+          map.set(vid, item);
+        }
+      }
+    }
+
+    const sorted = Array.from(map.values())
+      .filter((v) => v.publishedAt)
+      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+    const top10 = (sorted.length > 0 ? sorted.slice(0, 10) : (data.streams || []).slice(0, 10)).map((item) => {
+      const pubDate = item.publishedAt ? new Date(item.publishedAt) : null;
+      let formattedDate = item.publishedDate || item.date || '';
+      if (pubDate && !isNaN(pubDate.getTime())) {
+        try {
+          formattedDate = pubDate.toLocaleDateString('hi-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            timeZone: 'Asia/Kolkata',
+          });
+        } catch (e) {
+          formattedDate = pubDate.toISOString().split('T')[0];
+        }
+      }
+      return {
+        ...item,
+        id: item.videoId || item.id,
+        videoId: item.videoId || item.id,
+        formattedDate: formattedDate || 'हालिया सत्संग',
+      };
+    });
+
+    return sendSuccess(res, 'YouTube streams', top10);
   } catch (error) {
     next(error);
   }
