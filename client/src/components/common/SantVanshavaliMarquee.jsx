@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
 
-export const GURUS_VANSHAVALI = [
+const GURUS_VANSHAVALI = [
   {
     id: 1,
     name: 'सन्त कबीर साहिब जी',
@@ -89,7 +89,7 @@ export const GURUS_VANSHAVALI = [
   {
     id: 15,
     name: 'सन्त गरीब दास जी महाराज',
-    image: '/images/gurus/guru_15_garibdas_ji.jpg',
+    image: '/images/gurus/guru_15_garibdas_ji.jpg?v=20261004',
     era: 'हाथरस परंपरा',
   },
   {
@@ -160,8 +160,10 @@ export const SantVanshavaliMarquee = () => {
                   className="w-full h-full object-cover object-top group-hover:scale-108 transition-transform duration-500"
                   loading="lazy"
                   onError={(e) => {
-                    // Fallback to placeholder if not loaded
-                    e.currentTarget.src = '/images/baba_jaigurudev.jpg';
+                    if (!e.currentTarget.dataset.errorRetried) {
+                      e.currentTarget.dataset.errorRetried = 'true';
+                      e.currentTarget.src = guru.image.split('?')[0];
+                    }
                   }}
                 />
               </div>
