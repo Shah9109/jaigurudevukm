@@ -4,7 +4,6 @@ import {
   Calendar,
   FileText,
   Video,
-  Music,
   Download,
   Phone,
   MapPin,
@@ -34,7 +33,6 @@ export const Home = () => {
   const [data, setData] = useState(null);
   const [youtubeVideos, setYoutubeVideos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeAudio, setActiveAudio] = useState(null);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -75,7 +73,6 @@ export const Home = () => {
   const featuredVideos = (data?.featuredVideos && data.featuredVideos.length > 0)
     ? data.featuredVideos
     : (youtubeVideos.length > 0 ? youtubeVideos : []);
-  const featuredAudio = data?.featuredAudio || [];
   const siteSettings = data?.settings || {};
 
   return (
@@ -300,44 +297,7 @@ export const Home = () => {
         )}
       </section>
 
-      {/* 6. DEVOTIONAL AUDIO SATSANG BAR */}
-      {featuredAudio.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#3D0F17] via-[#5C1622] to-[#3D0F17] text-white shadow-xl">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-sacredGold-300 text-xs font-semibold">
-                  <Music className="w-3.5 h-3.5" />
-                  <span>ऑडियो सत्संग एवं नाम-धुन</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-serif font-bold text-white">
-                  Listen to Divine Bhajans & Naam Dhun
-                </h3>
-                <p className="text-xs sm:text-sm text-roseBlush-200/80 font-light max-w-xl">
-                  Immerse your consciousness in divine vibrations. Listen online or download for daily contemplation.
-                </p>
-              </div>
-
-              <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-3">
-                {featuredAudio.map((track) => (
-                  <div
-                    key={track._id || track.id}
-                    className="p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 flex items-center justify-between gap-4 min-w-[260px]"
-                  >
-                    <div className="space-y-0.5">
-                      <h4 className="font-semibold text-sm truncate max-w-[180px]">{track.title}</h4>
-                      <span className="text-[11px] text-sacredGold-300 block">{track.duration} • {track.category}</span>
-                    </div>
-                    <audio src={track.audioUrl} controls className="h-8 max-w-[140px]" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 7. DEVOTEE SADHANA MOBILE APP PROMO */}
+      {/* 6. DEVOTEE SADHANA MOBILE APP PROMO */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-roseBlush-100 via-cream-100 to-roseBlush-50 border border-roseBlush-200 p-8 sm:p-12 shadow-soft">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
