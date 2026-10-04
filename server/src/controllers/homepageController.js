@@ -175,28 +175,45 @@ export const getHomepageData = async (req, res, next) => {
       ];
     }
 
-    // Populate from real YouTube channel data if database videos are empty or fewer than 3
-    if (!featuredVideos || featuredVideos.length < 3) {
-      const ytData = getCachedYouTubeData();
-      if (ytData?.videos?.length > 0) {
-        const ytFormatted = ytData.videos.slice(0, 6).map((v) => ({
-          _id: v.id,
-          id: v.id,
-          videoId: v.videoId,
-          youtubeId: v.videoId,
-          title: v.title,
-          description: v.title,
-          thumbnailUrl: v.thumbnail,
-          thumbnail: v.thumbnail,
-          duration: v.duration,
-          category: v.category || 'Satsang Discourse',
-          speaker: 'परम संत बाबा उमाकान्त जी महाराज',
-          videoType: 'youtube',
-          views: v.views,
-          publishedDate: v.publishedDate,
-        }));
-        featuredVideos = featuredVideos?.length > 0 ? [...featuredVideos, ...ytFormatted].slice(0, 6) : ytFormatted;
-      }
+    // Populate with real YouTube Live Section streams from the past 20 days
+    const ytData = getCachedYouTubeData();
+    let liveStreamsPast20Days = [];
+    if (ytData?.streams?.length > 0) {
+      liveStreamsPast20Days = ytData.streams.slice(0, 6).map((s) => ({
+        _id: s.id,
+        id: s.id,
+        videoId: s.videoId,
+        youtubeId: s.videoId,
+        title: s.title,
+        description: s.title,
+        thumbnailUrl: s.thumbnail,
+        thumbnail: s.thumbnail,
+        duration: 'Live Stream',
+        category: 'Live Stream',
+        isLiveStream: true,
+        speaker: 'परम संत बाबा उमाकान्त जी महाराज',
+        videoType: 'youtube',
+        views: s.views,
+        publishedDate: s.date || 'हाल ही में स्ट्रीम किया गया',
+      }));
+      featuredVideos = liveStreamsPast20Days;
+    } else if (ytData?.videos?.length > 0) {
+      featuredVideos = ytData.videos.slice(0, 6).map((v) => ({
+        _id: v.id,
+        id: v.id,
+        videoId: v.videoId,
+        youtubeId: v.videoId,
+        title: v.title,
+        description: v.title,
+        thumbnailUrl: v.thumbnail,
+        thumbnail: v.thumbnail,
+        duration: v.duration,
+        category: v.category || 'Satsang Discourse',
+        speaker: 'परम संत बाबा उमाकान्त जी महाराज',
+        videoType: 'youtube',
+        views: v.views,
+        publishedDate: v.publishedDate,
+      }));
     }
 
     return sendSuccess(res, 'Homepage dynamic content retrieved successfully', {

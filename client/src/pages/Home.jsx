@@ -16,6 +16,7 @@ import {
   Smartphone,
   CheckCircle2,
   Youtube,
+  Radio,
   ExternalLink,
 } from 'lucide-react';
 import api from '../services/api';
@@ -46,8 +47,16 @@ export const Home = () => {
         if (homeRes.status === 'fulfilled' && homeRes.value?.success && homeRes.value?.data) {
           setData(homeRes.value.data);
         }
-        if (ytRes.status === 'fulfilled' && ytRes.value?.success && ytRes.value?.data?.videos) {
-          setYoutubeVideos(ytRes.value.data.videos.slice(0, 3));
+        if (ytRes.status === 'fulfilled' && ytRes.value?.success && ytRes.value?.data) {
+          const ytData = ytRes.value.data;
+          // Prioritize YouTube live section broadcasts from the past 20 days
+          const liveSectionPast20Days = (ytData.streams || []).slice(0, 6).map((s) => ({
+            ...s,
+            category: 'Live Stream',
+            isLiveStream: true,
+            speaker: 'परम संत बाबा उमाकान्त जी महाराज'
+          }));
+          setYoutubeVideos(liveSectionPast20Days.length > 0 ? liveSectionPast20Days : (ytData.videos || []).slice(0, 6));
         }
       } catch (err) {
         console.warn('Using fallback for homepage data:', err.message);
@@ -244,19 +253,19 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* 5. FEATURED VIDEO DISCOURSES FROM OFFICIAL YOUTUBE CHANNEL */}
+      {/* 5. FEATURED VIDEO DISCOURSES FROM OFFICIAL YOUTUBE CHANNEL (LIVE SECTION - PAST 20 DAYS) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-8">
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 border border-red-200/80 rounded-full text-red-700 text-xs font-bold">
-              <Youtube className="w-3.5 h-3.5 text-red-600" />
-              <span>आधिकारिक यूट्यूब चैनल @Jaigurudevukm</span>
+              <Radio className="w-3.5 h-3.5 text-red-600 animate-pulse" />
+              <span>लाइव सत्संग प्रसारण — विगत 20 दिवस (Live Streams)</span>
             </div>
             <h2 className="text-2xl sm:text-3.5xl font-serif font-bold text-stone-900">
-              Featured Video Discourses
+              Featured Video Discourses & Live Streams
             </h2>
             <p className="text-xs sm:text-sm text-stone-600 font-light max-w-xl">
-              परम पूज्य बाबा उमाकान्त जी महाराज के पावन अमृत वचन एवं विशेष सत्संग प्रवचन — सीधे आधिकारिक यूट्यूब चैनल से।
+              परम पूज्य बाबा उमाकान्त जी महाराज के विगत 20 दिनों के पावन लाइव सत्संग प्रसारण एवं अमृत उपदेश — सीधे आधिकारिक यूट्यूब चैनल @Jaigurudevukm के Live अनुभाग से।
             </p>
           </div>
 
@@ -265,17 +274,17 @@ export const Home = () => {
               to="/videos"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-maroon-700 hover:bg-maroon-800 text-white text-xs font-bold transition-all shadow-sm"
             >
-              <span>Watch All Videos</span>
+              <span>Watch All Videos & Streams</span>
               <ChevronRight className="w-4 h-4" />
             </Link>
             <a
-              href="https://www.youtube.com/@Jaigurudevukm"
+              href="https://www.youtube.com/@Jaigurudevukm/streams"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-sm"
             >
               <Youtube className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Subscribe</span>
+              <span className="hidden sm:inline">Live Channel</span>
             </a>
           </div>
         </div>
@@ -284,7 +293,7 @@ export const Home = () => {
           <LoadingSkeleton count={3} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredVideos.slice(0, 3).map((video) => (
+            {featuredVideos.slice(0, 6).map((video) => (
               <VideoCard key={video._id || video.id || video.videoId} video={video} />
             ))}
           </div>

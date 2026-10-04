@@ -48,9 +48,16 @@ export const VideoCard = ({ video }) => {
             </div>
           )}
 
-          <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-xs text-maroon-900 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase shadow-xs">
-            {video.category || 'Discourse'}
-          </div>
+          {video.isLiveStream || video.category === 'Live Stream' ? (
+            <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-bold shadow-md">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span>LIVE STREAM</span>
+            </div>
+          ) : (
+            <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-xs text-maroon-900 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase shadow-xs">
+              {video.category || 'Discourse'}
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -58,29 +65,30 @@ export const VideoCard = ({ video }) => {
           <div>
             <h3
               onClick={() => setModalOpen(true)}
-              className="text-base font-serif font-bold text-stone-900 hover:text-maroon-700 cursor-pointer transition-colors mb-2 line-clamp-2"
+              className="text-base font-serif font-bold text-stone-900 group-hover:text-red-600 cursor-pointer transition-colors mb-2 line-clamp-2 leading-snug"
             >
               {video.title}
             </h3>
 
-            {video.description && (
-              <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed mb-3">
-                {video.description}
+            {video.views && (
+              <p className="text-[11px] text-stone-500 mb-2">
+                {video.views} • {video.publishedDate || video.date || 'हाल ही में'}
               </p>
             )}
           </div>
 
           <div className="pt-2.5 border-t border-roseBlush-100 flex items-center justify-between text-xs text-stone-500">
-            <span className="flex items-center gap-1.5 truncate">
+            <span className="flex items-center gap-1.5 truncate text-[11px]">
               <User className="w-3.5 h-3.5 text-maroon-600 shrink-0" />
               <span className="truncate">{video.speaker || 'Pujya Maharaj Ji'}</span>
             </span>
 
             <button
               onClick={() => setModalOpen(true)}
-              className="font-bold text-maroon-700 hover:text-maroon-900"
+              className="font-bold text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer text-xs"
             >
-              Watch Now
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Watch Now</span>
             </button>
           </div>
         </div>
