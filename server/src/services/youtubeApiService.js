@@ -58,64 +58,108 @@ export async function checkLiveStreamRealTime() {
 }
 
 /**
- * 2. Fetch Latest Uploaded Videos & Shorts via Uploads Playlist (Costs only 1 quota unit)
+ * 2. Fetch All Videos Till Now via Uploads Playlist (Paginated, only 1 quota unit per 50 videos)
  */
-export async function fetchLatestUploadsFromApi(maxResults = 40) {
+export async function fetchAllUploadsFromApi({ maxPages = 40, pageSize = 50 } = {}) {
   if (!YOUTUBE_API_KEY || !UPLOADS_PLAYLIST_ID) {
     return null;
   }
 
+  let pageToken = '';
+  let pageCount = 0;
+  const videos = [];
+  const shorts = [];
+  const streams = [];
+
   try {
-    const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${UPLOADS_PLAYLIST_ID}&maxResults=${maxResults}&key=${YOUTUBE_API_KEY}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) {
-      console.warn(`[YouTube API] Playlist items status: ${res.status}`);
-      return null;
-    }
+    while (pageCount < maxPages) {
+      pageCount++;
+      const pageQuery = pageToken ? `&pageToken=${pageToken}` : '';
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${UPLOADS_PLAYLIST_ID}&maxResults=${pageSize}${pageQuery}&key=${YOUTUBE_API_KEY}`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+      if (!res.ok) {
+        console.warn(`[YouTube API] Playlist page ${pageCount} error status: ${res.status}`);
+        break;
+      }
 
-    const data = await res.json();
-    const items = data.items || [];
+      const data = await res.json();
+      const items = data.items || [];
+      if (items.length === 0) break;
 
-    const videos = [];
-    const shorts = [];
+      for (const item of items) {
+        const snippet = item.snippet || {};
+        const videoId = snippet.resourceId?.videoId;
+        if (!videoId) continue;
 
-    for (const item of items) {
-      const snippet = item.snippet || {};
-      const videoId = snippet.resourceId?.videoId;
-      if (!videoId) continue;
+        const title = snippet.title || '';
+        const rawDesc = snippet.description || '';
+        const description = rawDesc.length > 200 ? rawDesc.substring(0, 200).trim() + '...' : rawDesc;
+        const thumbnail =
+          snippet.thumbnails?.maxres?.url ||
+          snippet.thumbnails?.high?.url ||
+          snippet.thumbnails?.medium?.url ||
+          `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
-      const title = snippet.title || '';
-      const description = snippet.description || '';
-      const thumbnail =
-        snippet.thumbnails?.maxres?.url ||
-        snippet.thumbnails?.high?.url ||
-        snippet.thumbnails?.medium?.url ||
-        `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+        const isShort =
+          title.toLowerCase().includes('#short') ||
+          rawDesc.toLowerCase().includes('#shorts') ||
+          title.toLowerCase().includes('#shorts');
 
-      const videoObj = {
-        id: videoId,
-        videoId,
-        title,
-        description,
-        publishedAt: snippet.publishedAt,
-        date: formatDateHuman(snippet.publishedAt),
-        thumbnail,
-        url: title.toLowerCase().includes('#short') || description.toLowerCase().includes('#shorts')
-          ? `https://www.youtube.com/shorts/${videoId}`
-          : `https://www.youtube.com/watch?v=${videoId}`
-      };
+        const isStream =
+          title.toLowerCase().includes('stream') ||
+          title.toLowerCase().includes('लाइव') ||
+          title.startsWith('Satsang |') ||
+          rawDesc.toLowerCase().includes('live streaming');
 
-      if (title.toLowerCase().includes('#short') || description.toLowerCase().includes('#shorts')) {
-        shorts.push(videoObj);
-      } else {
-        videos.push(videoObj);
+        const videoObj = {
+          id: videoId,
+          videoId,
+          title,
+          description,
+          publishedAt: snippet.publishedAt,
+          publishedDate: formatDateHuman(snippet.publishedAt),
+          date: formatDateHuman(snippet.publishedAt),
+          thumbnail,
+          url: isShort
+            ? `https://www.youtube.com/shorts/${videoId}`
+            : `https://www.youtube.com/watch?v=${videoId}`,
+          category: isStream ? 'Live Satsang' : isShort ? 'Shorts' : 'Discourse',
+          duration: isStream ? 'Live Satsang' : isShort ? 'Short' : 'Satsang'
+        };
+
+        if (isShort) {
+          shorts.push(videoObj);
+        } else if (isStream) {
+          streams.push(videoObj);
+          videos.push(videoObj);
+        } else {
+          videos.push(videoObj);
+        }
+      }
+
+      pageToken = data.nextPageToken;
+      if (!pageToken) {
+        console.log(`[YouTube API] Finished all available uploads at page ${pageCount}.`);
+        break;
       }
     }
 
-    return { videos, shorts };
+    return {
+      videos,
+      shorts,
+      streams,
+      totalFetched: videos.length + shorts.length,
+      pagesFetched: pageCount
+    };
   } catch (err) {
     console.warn('[YouTube API] Uploads fetch error:', err.message);
-    return null;
+    return {
+      videos,
+      shorts,
+      streams,
+      totalFetched: videos.length + shorts.length,
+      pagesFetched: pageCount
+    };
   }
 }
 
@@ -151,16 +195,16 @@ export async function fetchPlaylistsFromApi(maxResults = 25) {
 }
 
 /**
- * 4. Sync Real-Time Data and Update Local Cache File
+ * 4. Sync Real-Time Data (All videos till now) and Update Local Cache File
  */
-export async function syncRealTimeYouTubeData() {
+export async function syncRealTimeYouTubeData({ maxPages = 40 } = {}) {
   const [liveInfo, uploadsData, playlists] = await Promise.all([
     checkLiveStreamRealTime(),
-    fetchLatestUploadsFromApi(50),
+    fetchAllUploadsFromApi({ maxPages, pageSize: 50 }),
     fetchPlaylistsFromApi(25)
   ]);
 
-  if (!uploadsData) {
+  if (!uploadsData || uploadsData.totalFetched === 0) {
     return null;
   }
 
@@ -173,13 +217,14 @@ export async function syncRealTimeYouTubeData() {
     existing = {};
   }
 
+  // Deduplicate and combine videos
   const merged = {
     channelInfo: {
       title: 'Jaigurudev UKM Official',
       handle: '@Jaigurudevukm',
       customUrl: 'https://www.youtube.com/@Jaigurudevukm',
       subscribers: existing.channelInfo?.subscribers || '1.25M+ Devotees',
-      videosCount: '7,180+ Videos',
+      videosCount: `${uploadsData.totalFetched}+ Videos Synced (7,180+ on YouTube)`,
       avatar: '/images/baba_jaigurudev.jpg',
       maharajAvatar: '/images/maharaj_ji.jpg',
       description: 'जयगुरुदेव धर्म प्रचारक संस्था का आधिकारिक यूट्यूब मंच। परम संत बाबा उमाकान्त जी महाराज के नित्य पावन सत्संग, नामदान, आरती एवं शाकाहार संदेशों का पावन प्रसारण।',
@@ -188,14 +233,17 @@ export async function syncRealTimeYouTubeData() {
     featured: uploadsData.videos[0] || existing.featured || {},
     videos: uploadsData.videos.length > 0 ? uploadsData.videos : existing.videos || [],
     shorts: uploadsData.shorts.length > 0 ? uploadsData.shorts : existing.shorts || [],
-    streams: existing.streams || [],
+    streams: uploadsData.streams.length > 0 ? uploadsData.streams : existing.streams || [],
     playlists: playlists.length > 0 ? playlists : existing.playlists || [],
-    lastUpdated: new Date().toISOString()
+    lastUpdated: new Date().toISOString(),
+    totalVideosCount: uploadsData.videos.length,
+    totalShortsCount: uploadsData.shorts.length,
+    totalPagesFetched: uploadsData.pagesFetched
   };
 
   try {
     fs.writeFileSync(DATA_FILE, JSON.stringify(merged, null, 2), 'utf8');
-    console.log('[YouTube API] Real-time YouTube channel data synced to disk successfully.');
+    console.log(`[YouTube API] Successfully synced ${uploadsData.totalFetched} videos across ${uploadsData.pagesFetched} pages to disk.`);
   } catch (err) {
     console.error('[YouTube API] Could not write data file:', err);
   }
