@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Youtube, Play, ExternalLink, Sparkles, Radio, X } from 'lucide-react';
+import { Youtube, Play, Pause, ExternalLink, Sparkles, Radio, X } from 'lucide-react';
 import api from '../../services/api';
 
 const DEFAULT_FALLBACK_STREAMS = [
@@ -88,6 +88,7 @@ const DEFAULT_FALLBACK_STREAMS = [
 export const LiveStreamsMarquee = () => {
   const [streams, setStreams] = useState(DEFAULT_FALLBACK_STREAMS);
   const [activeVideoModal, setActiveVideoModal] = useState(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -134,15 +135,35 @@ export const LiveStreamsMarquee = () => {
           </p>
         </div>
 
-        <a
-          href="https://www.youtube.com/@Jaigurudevukm/streams"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md hover:shadow-red-600/30 transition-all shrink-0"
-        >
-          <Youtube className="w-4 h-4" />
-          <span>View All on YouTube Channel ›</span>
-        </a>
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          <button
+            onClick={() => setIsPaused(!isPaused)}
+            title={isPaused ? "गति शुरू करें (Resume Stream Motion)" : "गति रोकें (Pause Stream Motion)"}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white hover:bg-pink-50 text-stone-700 hover:text-maroon-800 font-bold text-xs border border-pink-300 shadow-xs transition-all"
+          >
+            {isPaused ? (
+              <>
+                <Play className="w-3.5 h-3.5 text-emerald-600 fill-current" />
+                <span>गति शुरू करें (Play)</span>
+              </>
+            ) : (
+              <>
+                <Pause className="w-3.5 h-3.5 text-stone-600 fill-current" />
+                <span>गति रोकें (Pause)</span>
+              </>
+            )}
+          </button>
+
+          <a
+            href="https://www.youtube.com/@Jaigurudevukm/streams"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md hover:shadow-red-600/30 transition-all shrink-0"
+          >
+            <Youtube className="w-4 h-4" />
+            <span>View All on YouTube Channel ›</span>
+          </a>
+        </div>
       </div>
 
       {/* Infinite Moving Right Marquee Track */}
@@ -151,7 +172,13 @@ export const LiveStreamsMarquee = () => {
         <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-[#FFF0F3] to-transparent z-10 pointer-events-none" />
         <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-[#FFF0F3] to-transparent z-10 pointer-events-none" />
 
-        <div className="animate-marquee-right flex gap-5 py-2 group-hover/track:[animation-play-state:paused]">
+        <div
+          className="animate-marquee-right flex gap-5 py-2 group-hover/track:[animation-play-state:paused]"
+          style={{
+            animationDuration: '280s',
+            animationPlayState: isPaused ? 'paused' : undefined,
+          }}
+        >
           {displayStreams.map((stream, idx) => (
             <div
               key={`${stream.videoId}-${idx}`}

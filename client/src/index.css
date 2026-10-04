@@ -117,7 +117,7 @@ html, body, * {
 .animate-marquee-right {
   display: flex;
   width: max-content;
-  animation: marquee-right 140s linear infinite;
+  animation: marquee-right 280s linear infinite;
 }
 
 .animate-marquee-right:hover {
