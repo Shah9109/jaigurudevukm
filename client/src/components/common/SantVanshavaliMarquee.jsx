@@ -145,15 +145,15 @@ export const SantVanshavaliMarquee = () => {
           {marqueeItems.map((guru, index) => (
             <div
               key={`${guru.id}-${index}`}
-              className="w-38 sm:w-44 bg-white/95 backdrop-blur-xs rounded-2xl p-2.5 sm:p-3 border-2 border-sacredGold-400/60 shadow-md hover:shadow-sacred hover:scale-105 transition-all duration-300 flex flex-col items-center shrink-0 group relative select-none"
+              className="w-32 sm:w-44 bg-white/95 backdrop-blur-xs rounded-2xl p-2 sm:p-3 border-2 border-sacredGold-400/60 shadow-md hover:shadow-sacred hover:scale-105 transition-all duration-300 flex flex-col items-center shrink-0 group relative select-none"
             >
               {/* Chronological Sequence Badge */}
-              <span className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-md bg-gradient-to-r from-maroon-950 to-maroon-900 text-sacredGold-300 font-devanagari font-bold text-[10px] sm:text-[11px] border border-sacredGold-400/60 shadow-xs">
+              <span className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 z-10 px-1.5 py-0.2 sm:px-2 sm:py-0.5 rounded-md bg-gradient-to-r from-maroon-950 to-maroon-900 text-sacredGold-300 font-devanagari font-bold text-[9px] sm:text-[11px] border border-sacredGold-400/60 shadow-xs">
                 #{guru.id}
               </span>
 
               {/* Guru Portrait */}
-              <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-stone-100 border border-sacredGold-200 mb-2 relative shadow-xs">
+              <div className="w-full h-28 sm:h-40 rounded-xl overflow-hidden bg-stone-100 border border-sacredGold-200 mb-1.5 sm:mb-2 relative shadow-xs">
                 <img
                   src={guru.image}
                   alt={guru.name}
@@ -167,12 +167,12 @@ export const SantVanshavaliMarquee = () => {
               </div>
 
               {/* Name */}
-              <span className="font-devanagari font-bold text-xs sm:text-sm text-stone-900 text-center leading-tight line-clamp-1 group-hover:text-maroon-800 transition-colors">
+              <span className="font-devanagari font-bold text-[11px] sm:text-sm text-stone-900 text-center leading-tight line-clamp-1 group-hover:text-maroon-800 transition-colors">
                 {guru.name}
               </span>
 
               {/* Spiritual Era / Title */}
-              <span className="text-[10px] text-maroon-700 font-semibold tracking-wider mt-1 text-center line-clamp-1">
+              <span className="text-[9px] sm:text-[10px] text-maroon-700 font-semibold tracking-wider mt-0.5 sm:mt-1 text-center line-clamp-1">
                 {guru.era}
               </span>
             </div>
