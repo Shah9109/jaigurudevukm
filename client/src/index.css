@@ -85,7 +85,16 @@ html, body, * {
   background: transparent !important;
 }
 
-/* Infinite Smooth Marquee Moving Right */
+/* Infinite Smooth Marquee Moving */
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes marquee-right {
   0% {
     transform: translateX(-50%);
@@ -95,10 +104,20 @@ html, body, * {
   }
 }
 
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 50s linear infinite;
+}
+
+.animate-marquee-left:hover {
+  animation-play-state: paused;
+}
+
 .animate-marquee-right {
   display: flex;
   width: max-content;
-  animation: marquee-right 32s linear infinite;
+  animation: marquee-right 50s linear infinite;
 }
 
 .animate-marquee-right:hover {
