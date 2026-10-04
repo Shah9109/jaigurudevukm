@@ -124,6 +124,7 @@ export const LiveStreamsMarquee = () => {
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold border border-pink-300 mb-2 animate-pulse">
             <Radio className="w-3.5 h-3.5 text-pink-600" />
             <span>लाइव सत्संग एवं नवीनतम 10 धाराप्रवाह (Live & Recent Streams)</span>
+            <span className="text-[10px] text-pink-600 font-normal hidden sm:inline">• माउस ले जाकर रोकें (Hover to Pause)</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-serif font-extrabold text-maroon-950">
             Official YouTube Live Streams
@@ -145,12 +146,12 @@ export const LiveStreamsMarquee = () => {
       </div>
 
       {/* Infinite Moving Right Marquee Track */}
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full overflow-hidden group/track">
         {/* Left & Right Shadow Vignettes */}
         <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-[#FFF0F3] to-transparent z-10 pointer-events-none" />
         <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-[#FFF0F3] to-transparent z-10 pointer-events-none" />
 
-        <div className="animate-marquee-right flex gap-5 py-2">
+        <div className="animate-marquee-right flex gap-5 py-2 group-hover/track:[animation-play-state:paused]">
           {displayStreams.map((stream, idx) => (
             <div
               key={`${stream.videoId}-${idx}`}
