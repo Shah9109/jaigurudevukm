@@ -3,11 +3,12 @@ import { Audio } from '../models/Audio.js';
 import { Gallery } from '../models/Gallery.js';
 import { sendSuccess, sendError, sendPaginated } from '../utils/apiResponse.js';
 import { fetchFullYouTubeData, getCachedYouTubeData } from '../services/youtubeScraper.js';
+import { checkLiveStreamRealTime, syncRealTimeYouTubeData } from '../services/youtubeApiService.js';
 
 // YouTube Channel Data Cache
 let cachedChannelData = getCachedYouTubeData();
 let lastChannelFetchTime = cachedChannelData ? Date.now() : 0;
-const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes TTL
+const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL for real-time freshness
 
 const DEFAULT_CHANNEL_DATA = {
   channelInfo: {
@@ -15,7 +16,7 @@ const DEFAULT_CHANNEL_DATA = {
     handle: '@Jaigurudevukm',
     customUrl: 'https://www.youtube.com/@Jaigurudevukm',
     subscribers: '1.25M+ Devotees',
-    videosCount: '3,450+ Videos',
+    videosCount: '7,180+ Videos',
     avatar: '/images/baba_jaigurudev.jpg',
     maharajAvatar: '/images/maharaj_ji.jpg',
     description: 'जयगुरुदेव धर्म प्रचारक संस्था का आधिकारिक यूट्यूब मंच। परम संत बाबा उमाकान्त जी महाराज के नित्य पावन सत्संग, नामदान, आरती एवं शाकाहार संदेशों का पावन प्रसारण।',
@@ -55,19 +56,31 @@ export const getYouTubeChannelData = async (req, res, next) => {
       }
     }
 
-    // 3. Otherwise fetch fresh data from YouTube
+    // 3. Try official YouTube Data API v3 first
+    try {
+      const apiData = await syncRealTimeYouTubeData();
+      if (apiData && (apiData.videos?.length > 0 || apiData.shorts?.length > 0)) {
+        cachedChannelData = apiData;
+        lastChannelFetchTime = now;
+        return sendSuccess(res, 'YouTube channel data retrieved via Official API v3', cachedChannelData);
+      }
+    } catch (apiErr) {
+      console.warn('[YouTube Controller] API v3 sync failed, attempting scraper fallback:', apiErr.message);
+    }
+
+    // 4. Otherwise fallback to YouTube Scraper
     try {
       const freshData = await fetchFullYouTubeData();
       if (freshData && (freshData.videos?.length > 0 || freshData.shorts?.length > 0)) {
         cachedChannelData = freshData;
         lastChannelFetchTime = now;
-        return sendSuccess(res, 'YouTube channel data retrieved freshly', cachedChannelData);
+        return sendSuccess(res, 'YouTube channel data retrieved freshly (scraper)', cachedChannelData);
       }
     } catch (e) {
-      console.warn('[YouTube Controller] Live fetch failed, using fallback:', e.message);
+      console.warn('[YouTube Controller] Scraper fetch failed, using fallback:', e.message);
     }
 
-    // 4. Fallback if scrape could not get all items
+    // 5. Ultimate fallback if both external calls failed
     const fallback = cachedChannelData || getCachedYouTubeData() || DEFAULT_CHANNEL_DATA;
     return sendSuccess(res, 'YouTube channel data retrieved', fallback);
   } catch (error) {
@@ -78,10 +91,21 @@ export const getYouTubeChannelData = async (req, res, next) => {
 // Explicit refresh endpoint
 export const refreshYouTubeChannelData = async (req, res, next) => {
   try {
-    const freshData = await fetchFullYouTubeData();
+    let freshData = null;
+    try {
+      freshData = await syncRealTimeYouTubeData();
+    } catch (e) {
+      console.warn('[YouTube Controller] API refresh failed, trying scraper:', e.message);
+    }
+
+    if (!freshData) {
+      freshData = await fetchFullYouTubeData();
+    }
+
     cachedChannelData = freshData;
     lastChannelFetchTime = Date.now();
-    return sendSuccess(res, 'YouTube channel data refreshed successfully', {
+    return sendSuccess(res, 'YouTube channel data refreshed successfully in real-time', {
+      source: process.env.YOUTUBE_API_KEY ? 'Official YouTube Data API v3' : 'Scraper',
       videosCount: freshData.videos?.length || 0,
       shortsCount: freshData.shorts?.length || 0,
       streamsCount: freshData.streams?.length || 0,
@@ -104,6 +128,27 @@ export const getLiveNowStatus = async (req, res, next) => {
       return sendSuccess(res, 'Live status (cached)', cachedLiveStatus);
     }
 
+    // 1. Try Official YouTube Data API v3 check
+    try {
+      const apiLive = await checkLiveStreamRealTime();
+      if (apiLive) {
+        cachedLiveStatus = {
+          isLiveNow: Boolean(apiLive.isLiveNow),
+          videoId: apiLive.videoId || 'o9KlOqURRzU',
+          title: apiLive.title || 'परम पूज्य बाबा उमाकान्त जी महाराज — लाइव सत्संग प्रसारण',
+          thumbnail: apiLive.thumbnail || 'https://i.ytimg.com/vi/o9KlOqURRzU/hqdefault.jpg',
+          streamUrl: apiLive.streamUrl || 'https://www.youtube.com/@Jaigurudevukm/live',
+          channelUrl: 'https://www.youtube.com/@Jaigurudevukm/streams',
+          checkedVia: 'YouTube Data API v3'
+        };
+        lastLiveCheckTime = now;
+        return sendSuccess(res, 'Real-time live stream status retrieved (API v3)', cachedLiveStatus);
+      }
+    } catch (err) {
+      console.warn('[YouTube Controller] API live check failed, using fallback scraper:', err.message);
+    }
+
+    // 2. Fallback to HTML header check
     let isLiveNow = false;
     let liveVideoId = null;
     let liveTitle = 'परम पूज्य बाबा उमाकान्त जी महाराज — लाइव सत्संग प्रसारण';
@@ -138,7 +183,8 @@ export const getLiveNowStatus = async (req, res, next) => {
       title: liveTitle,
       thumbnail: liveVideoId ? `https://i.ytimg.com/vi/${liveVideoId}/hqdefault.jpg` : 'https://i.ytimg.com/vi/o9KlOqURRzU/hqdefault.jpg',
       streamUrl: liveVideoId ? `https://www.youtube.com/watch?v=${liveVideoId}` : 'https://www.youtube.com/@Jaigurudevukm/live',
-      channelUrl: 'https://www.youtube.com/@Jaigurudevukm/streams'
+      channelUrl: 'https://www.youtube.com/@Jaigurudevukm/streams',
+      checkedVia: 'Scraper Fallback'
     };
 
     lastLiveCheckTime = now;
