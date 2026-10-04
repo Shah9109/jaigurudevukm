@@ -1,61 +1,39 @@
-import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import { BaseRepository, mapRowToDoc } from './BaseRepository.js';
 
-const adminSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, 'Admin name is required'],
-      trim: true,
-      maxlength: [100, 'Name cannot exceed 100 characters'],
-    },
-    email: {
-      type: String,
-      required: [true, 'Email is required'],
-      unique: true,
-      lowercase: true,
-      trim: true,
-      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
-    },
-    password: {
-      type: String,
-      required: [true, 'Password is required'],
-      minlength: [8, 'Password must be at least 8 characters long'],
-      select: false,
-    },
-    role: {
-      type: String,
-      enum: ['superadmin', 'admin', 'editor'],
-      default: 'admin',
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    lastLogin: {
-      type: Date,
-      default: null,
-    },
-    passwordChangedAt: {
-      type: Date,
-    },
-  },
-  {
-    timestamps: true,
+class AdminRepository extends BaseRepository {
+  constructor() {
+    super('admins', {}, []);
   }
-);
 
-// Hash password prior to saving
-adminSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(12);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
+  hydrate(row) {
+    const doc = super.hydrate(row);
+    if (doc) {
+      doc.comparePassword = async function (candidatePassword) {
+        if (!candidatePassword || !this.password) return false;
+        return bcrypt.compare(candidatePassword, this.password);
+      };
+    }
+    return doc;
+  }
 
-// Compare password method
-adminSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
-};
+  async create(data) {
+    const adminData = { ...data };
+    if (adminData.password && !adminData.password.startsWith('$2')) {
+      const salt = await bcrypt.genSalt(10);
+      adminData.password = await bcrypt.hash(adminData.password, salt);
+    }
+    return super.create(adminData);
+  }
 
-export const Admin = mongoose.model('Admin', adminSchema);
+  async findByIdAndUpdate(id, updateData, options = {}) {
+    const data = { ...updateData };
+    if (data.password && !data.password.startsWith('$2')) {
+      const salt = await bcrypt.genSalt(10);
+      data.password = await bcrypt.hash(data.password, salt);
+    }
+    return super.findByIdAndUpdate(id, data, options);
+  }
+}
+
+export const Admin = new AdminRepository();

@@ -23,13 +23,17 @@ export const handleChatMessage = async (req, res, next) => {
     const tokens = cleanQuery.split(/[\s,?.!]+/).filter((t) => t.length > 1);
 
     // 1. Check direct match in ChatbotKnowledge
-    let match = await ChatbotKnowledge.findOne({
-      $or: [
-        { question: { $regex: cleanQuery, $options: 'i' } },
-        { keywords: { $in: tokens } },
-      ],
-      isActive: true,
-    }).lean();
+    let match = null;
+    try {
+      const allKb = await ChatbotKnowledge.find({ isPublished: true });
+      match = (allKb || []).find((kb) => {
+        const qMatch = kb.question && kb.question.toLowerCase().includes(cleanQuery);
+        const kwMatch = Array.isArray(kb.keywords)
+          ? kb.keywords.some((kw) => tokens.includes(kw.toLowerCase()) || cleanQuery.includes(kw.toLowerCase()))
+          : false;
+        return qMatch || kwMatch;
+      });
+    } catch (e) {}
 
     if (match) {
       return sendSuccess(res, 'Answer found from knowledge base', {
@@ -43,10 +47,9 @@ export const handleChatMessage = async (req, res, next) => {
     if (tokens.some((t) => ['satsang', 'सत्संग', 'samagam', 'समागम', 'time', 'समय', 'schedule', 'कार्यक्रम'].includes(t))) {
       const upcoming = await Satsang.find({ status: 'upcoming' })
         .sort({ date: 1 })
-        .limit(3)
-        .lean();
+        .limit(3);
 
-      if (upcoming.length > 0) {
+      if (upcoming && upcoming.length > 0) {
         let replyText = 'जयगुरुदेव! आगामी सत्संग कार्यक्रम इस प्रकार हैं:\n\n';
         upcoming.forEach((s, idx) => {
           replyText += `${idx + 1}. **${s.title}**\n📅 दिनांक: ${new Date(s.date).toLocaleDateString('hi-IN')} (${s.startTime})\n📍 स्थान: ${s.location}, ${s.city}\n\n`;
@@ -61,10 +64,10 @@ export const handleChatMessage = async (req, res, next) => {
     }
 
     // 3. Check Ashram Address / Contact Query
-    if (tokens.some((t) => ['contact', 'address', 'phone', 'helpline', 'पता', 'स्थान', 'फोन', 'नंबर', 'मथुरा', 'mathura'].includes(t))) {
-      const settings = await SiteSettings.findOne().lean();
-      const phone = settings?.contactInfo?.phone || '+91-9876543210';
-      const address = settings?.contactInfo?.address || 'जयगुरुदेव आश्रम, मथुरा-दिल्ली राष्ट्रीय राजमार्ग (NH-19), मथुरा (उ.प्र.) 281001';
+    if (tokens.some((t) => ['contact', 'address', 'phone', 'helpline', 'पता', 'स्थान', 'फोन', 'नंबर', 'मथुरा', 'mathura', 'ujjain', 'उज्जैन'].includes(t))) {
+      const settings = await SiteSettings.findOne();
+      const phone = settings?.contactInfo?.phone || '+91-9754700200';
+      const address = settings?.contactInfo?.address || 'जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड, उज्जैन तथा मथुरा आश्रम (NH-19)';
 
       const replyText = `जयगुरुदेव! आश्रम का मुख्य पता एवं संपर्क विवरण:\n\n📍 **पता:** ${address}\n📞 **हेल्पलाइन:** ${phone}\n⏰ **कार्यालय समय:** प्रातः 06:00 से सायं 08:00 बजे तक।\n\nआप किसी भी दिन आश्रम पधार सकते हैं। भोजन एवं आवास की निशुल्क व्यवस्था है।`;
       return sendSuccess(res, 'Answer compiled from ashram contact', {
@@ -75,24 +78,23 @@ export const handleChatMessage = async (req, res, next) => {
     }
 
     // 4. Check FAQ Query
-    const faqMatch = await FAQ.findOne({
-      $or: [
-        { question: { $regex: cleanQuery, $options: 'i' } },
-        { keywords: { $in: tokens } },
-      ],
-      isActive: true,
-    }).lean();
-
-    if (faqMatch) {
-      return sendSuccess(res, 'Answer found from FAQ', {
-        reply: faqMatch.answer,
-        source: 'faq',
-        category: faqMatch.category,
+    try {
+      const faqs = await FAQ.find({ isPublished: true });
+      const faqMatch = (faqs || []).find((f) => {
+        return f.question && tokens.some((t) => f.question.toLowerCase().includes(t));
       });
-    }
+
+      if (faqMatch) {
+        return sendSuccess(res, 'Answer found from FAQ', {
+          reply: faqMatch.answer,
+          source: 'faq',
+          category: faqMatch.category,
+        });
+      }
+    } catch (e) {}
 
     // 5. Default Devotional Knowledge Fallback
-    const fallbackReply = `जयगुरुदेव! आपके प्रश्न का उत्तर खोजने हेतु कृपया निम्नलिखित मुख्य बिंदुओं को देखें:\n\n1. **शाकाहार एवं नशामुक्ति:** संस्था का मुख्य संदेश जीवों पर दया, पूर्ण शाकाहार और सदाचार है।\n2. **नाम-साधना (सुरत-शब्द योग):** अंतर के दिव्य नाद और प्रकाश को सुनने की सरल साधना।\n3. **आश्रम दर्शन:** मथुरा आश्रम में 365 दिन अखंड लंगर एवं साधना की निशुल्क व्यवस्था है।\n\nयदि आपको कोई विशेष जानकारी चाहिए, तो कृपया हमारे संपर्क पृष्ठ से आश्रम कार्यालय को संदेश भेजें। जयगुरुदेव!`;
+    const fallbackReply = `जयगुरुदेव! आपके प्रश्न का उत्तर खोजने हेतु कृपया निम्नलिखित मुख्य बिंदुओं को देखें:\n\n1. **शाकाहार एवं नशामुक्ति:** संस्था का मुख्य संदेश जीवों पर दया, पूर्ण शाकाहार और सदाचार है।\n2. **नाम-साधना (सुरत-शब्द योग):** अंतर के दिव्य नाद और प्रकाश को सुनने की सरल साधना।\n3. **आश्रम दर्शन:** आश्रम में 365 दिन अखंड लंगर एवं साधना की निशुल्क व्यवस्था है।\n\nयदि आपको कोई विशेष जानकारी चाहिए, तो कृपया हमारे संपर्क पृष्ठ से आश्रम कार्यालय को संदेश भेजें। जयगुरुदेव!`;
 
     return sendSuccess(res, 'Default spiritual response', {
       reply: fallbackReply,
@@ -110,7 +112,7 @@ export const handleChatMessage = async (req, res, next) => {
  */
 export const getKnowledgeList = async (req, res, next) => {
   try {
-    const list = await ChatbotKnowledge.find().sort({ createdAt: -1 }).lean();
+    const list = await ChatbotKnowledge.find().sort({ createdAt: -1 });
     return sendSuccess(res, 'Knowledge list retrieved', list);
   } catch (error) {
     next(error);

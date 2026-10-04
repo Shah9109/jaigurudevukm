@@ -4,9 +4,9 @@ import { sendSuccess, sendError, sendPaginated } from '../utils/apiResponse.js';
 // Get Site Settings
 export const getSettings = async (req, res, next) => {
   try {
-    let settings = await SiteSettings.findOne().lean();
+    let settings = await SiteSettings.findOne();
     if (!settings) {
-      settings = await SiteSettings.create({});
+      settings = await SiteSettings.create({ id: 'default' });
     }
     return sendSuccess(res, 'Site settings retrieved', settings);
   } catch (error) {
@@ -17,13 +17,7 @@ export const getSettings = async (req, res, next) => {
 // Update Site Settings
 export const updateSettings = async (req, res, next) => {
   try {
-    let settings = await SiteSettings.findOne();
-    if (!settings) {
-      settings = new SiteSettings(req.body);
-    } else {
-      Object.assign(settings, req.body);
-    }
-    await settings.save();
+    const settings = await SiteSettings.updateSettings(req.body);
 
     // Log action
     try {
@@ -52,7 +46,7 @@ export const getActivityLogs = async (req, res, next) => {
 
     const skip = (Number(page) - 1) * Number(limit);
     const [items, total] = await Promise.all([
-      ActivityLog.find(filter).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).lean(),
+      ActivityLog.find(filter).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
       ActivityLog.countDocuments(filter),
     ]);
 
@@ -71,7 +65,7 @@ export const getEnquiries = async (req, res, next) => {
 
     const skip = (Number(page) - 1) * Number(limit);
     const [items, total] = await Promise.all([
-      ContactEnquiry.find(filter).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).lean(),
+      ContactEnquiry.find(filter).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
       ContactEnquiry.countDocuments(filter),
     ]);
 
@@ -87,8 +81,7 @@ export const updateEnquiryStatus = async (req, res, next) => {
     const { isRead, status, adminNotes } = req.body;
     const enquiry = await ContactEnquiry.findByIdAndUpdate(
       req.params.id,
-      { isRead, status, adminNotes },
-      { new: true }
+      { isRead, status, adminNotes }
     );
     if (!enquiry) return sendError(res, 'Enquiry not found', 404);
     return sendSuccess(res, 'Enquiry updated successfully', enquiry);

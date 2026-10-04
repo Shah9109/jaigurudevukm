@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 import { Admin } from '../models/Admin.js';
 import { sendError } from '../utils/apiResponse.js';
 
@@ -30,17 +29,18 @@ export const protectAdmin = async (req, res, next) => {
       return sendError(res, 'Invalid token. Please log in again.', 401);
     }
 
-    // Check if admin still exists and is active
+    // Check if admin still exists and is active in MySQL
     let admin = null;
-    if (mongoose.connection.readyState === 1) {
-      try {
-        admin = await Admin.findById(decoded.id);
-      } catch (dbErr) {}
-    }
+    try {
+      admin = await Admin.findById(decoded.id);
+    } catch (dbErr) {}
 
-    if (!admin && decoded.email === (process.env.ADMIN_DEFAULT_EMAIL || 'admin@jaigurudev.org')) {
+    const defaultEmail = (process.env.ADMIN_DEFAULT_EMAIL || 'admin@jaigurudev.org').toLowerCase().trim();
+
+    if (!admin && decoded.email?.toLowerCase().trim() === defaultEmail) {
       // Allow default fallback token if in dev mode
       req.admin = {
+        id: decoded.id || 'admin-root-id',
         _id: decoded.id || 'admin-root-id',
         name: 'Super Admin',
         email: decoded.email,
@@ -54,7 +54,7 @@ export const protectAdmin = async (req, res, next) => {
       return sendError(res, 'The admin user for this token no longer exists.', 401);
     }
 
-    if (!admin.isActive) {
+    if (admin.isActive === false) {
       return sendError(res, 'This admin account has been deactivated. Please contact an administrator.', 403);
     }
 

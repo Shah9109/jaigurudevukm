@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import mongoose from 'mongoose';
 import {
   Admin,
   Post,
@@ -21,7 +20,7 @@ import { connectDB } from '../config/db.js';
 
 export const seedDatabase = async () => {
   try {
-    console.log('[Seed] Connecting to MongoDB to populate initial Jaigurudev Sanstha data...');
+    console.log('[Seed] Connecting to MySQL database to populate initial Jaigurudev Sanstha data...');
     await connectDB();
 
     // 1. Create Default Super Admin if not existing

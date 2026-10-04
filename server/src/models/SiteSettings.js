@@ -1,93 +1,217 @@
-import mongoose from 'mongoose';
+import { BaseRepository } from './BaseRepository.js';
+import { query, isDbConnected } from '../config/db.js';
 
-const bannerItemSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  subtitle: { type: String, default: '' },
-  imageUrl: { type: String, required: true },
-  ctaText: { type: String, default: 'Learn More' },
-  ctaLink: { type: String, default: '/about' },
-  order: { type: Number, default: 0 },
-  active: { type: Boolean, default: true },
-});
-
-const siteSettingsSchema = new mongoose.Schema(
-  {
-    organizationName: {
-      type: String,
-      default: 'जयगुरुदेव धर्म प्रचारक संस्था (Jaigurudev Sanstha)',
-    },
-    tagline: {
-      type: String,
-      default: 'सत्य, दया, धर्म और नाम-साधना का पावन मार्ग',
-    },
-    logoUrl: {
-      type: String,
-      default: '/logo.svg',
-    },
-    announcementBar: {
-      enabled: { type: Boolean, default: true },
-      text: { type: String, default: 'श्री कृष्ण जन्माष्टमी पावन सत्संग कार्यक्रम — आगरा (Agra) में 2 से 4 तक आयोजित।' },
-      link: { type: String, default: '/satsang' },
-      isEmergency: { type: Boolean, default: false },
-    },
-    heroBanners: [bannerItemSchema],
-    contactInfo: {
-      phone: { type: String, default: '+91-9754700200' },
-      emergencyPhone: { type: String, default: '+91-9575600700' },
-      email: { type: String, default: 'contact@jaigurudev.org' },
-      address: { type: String, default: 'Baba Jaigurudev Ashram, Opposite Pingleshvar Railway Station, Maksi Road' },
-      city: { type: String, default: 'Ujjain' },
-      state: { type: String, default: 'Madhya Pradesh' },
-      pincode: { type: String, default: '456001' },
-      mapsEmbedUrl: { type: String, default: 'https://maps.google.com' },
-      officeHours: { type: String, default: 'Daily 06:00 AM – 08:00 PM' },
-    },
-    socialLinks: {
-      youtube: { type: String, default: 'https://www.youtube.com/c/jaigurudevukm' },
-      facebook: { type: String, default: 'https://facebook.com' },
-      instagram: { type: String, default: 'https://instagram.com' },
-      twitter: { type: String, default: 'https://x.com' },
-      telegram: { type: String, default: 'https://telegram.org' },
-      whatsapp: { type: String, default: 'https://whatsapp.com/channel/0029VaAcAA40QeadmEmp9y3c' },
-    },
-    footer: {
-      aboutShort: {
-        type: String,
-        default: 'Jaigurudev Sanstha is dedicated to spiritual upliftment, humanitarian service, vegetarianism, and righteous living under the divine guidance of the Master.',
-      },
-      disclaimer: {
-        type: String,
-        default: 'Official informational portal of Jaigurudev Sanstha. No registration fee is charged for attending public Satsang.',
-      },
-      copyrightText: {
-        type: String,
-        default: '© 2026 Jaigurudev Sanstha. All rights reserved.',
-      },
-    },
-    homepageSections: {
-      announcementBar: { type: Boolean, default: true },
-      heroSlider: { type: Boolean, default: true },
-      welcomeMessage: { type: Boolean, default: true },
-      upcomingSatsang: { type: Boolean, default: true },
-      upcomingEvents: { type: Boolean, default: true },
-      importantNotices: { type: Boolean, default: true },
-      ashramAdhesh: { type: Boolean, default: true },
-      featuredVideos: { type: Boolean, default: true },
-      audioPlayer: { type: Boolean, default: true },
-      photoGallery: { type: Boolean, default: true },
-      appPromotion: { type: Boolean, default: true },
-      contactSection: { type: Boolean, default: true },
-    },
-    appConfig: {
-      androidApkUrl: { type: String, default: '/downloads/jaigurudev-sadhana.apk' },
-      apkVersion: { type: String, default: '1.0.0' },
-      appPromoTitle: { type: String, default: 'Download Jaigurudev Sadhana App' },
-      appPromoSubtitle: { type: String, default: 'Your daily companion for Naam-Dhyan, spiritual alarms, timer, and daily reports.' },
-    },
+const DEFAULT_SETTINGS = {
+  id: 'default',
+  _id: 'default',
+  organizationName: 'जयगुरुदेव धर्म प्रचारक संस्था (Jaigurudev Sanstha)',
+  tagline: 'सत्य, दया, धर्म और नाम-साधना का पावन मार्ग',
+  logoUrl: '/logo.svg',
+  announcementBar: {
+    enabled: true,
+    text: 'श्री कृष्ण जन्माष्टमी पावन सत्संग कार्यक्रम — आगरा (Agra) में 2 से 4 तक आयोजित।',
+    link: '/satsang',
+    isEmergency: false,
   },
-  {
-    timestamps: true,
-  }
-);
+  heroBanners: [
+    {
+      id: 'banner-001',
+      title: 'सत्य, दया, धर्म और नाम-साधना का पावन मार्ग',
+      subtitle: 'Welcome to the Official Spiritual Portal of Jaigurudev Sanstha. Join our daily satsang, explore divine teachings, and immerse in spiritual upliftment.',
+      imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1600&q=80',
+      ctaText: 'Upcoming Satsang',
+      ctaLink: '/satsang',
+      order: 1,
+      active: true,
+    },
+  ],
+  contactInfo: {
+    phone: '+91-9754700200',
+    emergencyPhone: '+91-9575600700',
+    email: 'contact@jaigurudev.org',
+    address: 'बाबा जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड',
+    city: 'उज्जैन',
+    state: 'मध्य प्रदेश',
+    pincode: '456001',
+    mapsEmbedUrl: 'https://maps.google.com',
+    officeHours: 'Daily 06:00 AM – 08:00 PM',
+  },
+  socialLinks: {
+    youtube: 'https://www.youtube.com/c/jaigurudevukm',
+    facebook: 'https://facebook.com',
+    instagram: 'https://instagram.com',
+    twitter: 'https://x.com',
+    telegram: 'https://telegram.org',
+    whatsapp: 'https://whatsapp.com/channel/0029VaAcAA40QeadmEmp9y3c',
+  },
+  footer: {
+    aboutShort: 'Jaigurudev Sanstha is dedicated to spiritual upliftment, humanitarian service, vegetarianism, and righteous living under the divine guidance of the Master.',
+    disclaimer: 'Official informational portal of Jaigurudev Sanstha. No registration fee is charged for attending public Satsang.',
+    copyrightText: '© 2026 Jaigurudev Sanstha. All rights reserved.',
+  },
+  homepageSections: {
+    announcementBar: true,
+    heroSlider: true,
+    welcomeMessage: true,
+    upcomingSatsang: true,
+    upcomingEvents: true,
+    importantNotices: true,
+    ashramAdhesh: true,
+    featuredVideos: true,
+    audioPlayer: false,
+    photoGallery: true,
+    appPromotion: true,
+    contactSection: true,
+  },
+  appConfig: {
+    androidApkUrl: '/downloads/jaigurudev-sadhana.apk',
+    apkVersion: '1.0.0',
+    appPromoTitle: 'Download Jaigurudev Sadhana App',
+    appPromoSubtitle: 'Your daily companion for Naam-Dhyan, spiritual alarms, timer, and daily reports.',
+  },
+};
 
-export const SiteSettings = mongoose.model('SiteSettings', siteSettingsSchema);
+class SiteSettingsRepository extends BaseRepository {
+  constructor() {
+    super('site_settings', {}, [DEFAULT_SETTINGS]);
+  }
+
+  hydrate(row) {
+    if (!row) return null;
+    const doc = super.hydrate(row);
+
+    // Reconstruct nested structure
+    let hpSections = doc.homepageSections || doc.homepage_sections;
+    if (typeof hpSections === 'string') {
+      try {
+        hpSections = JSON.parse(hpSections);
+      } catch (e) {
+        hpSections = DEFAULT_SETTINGS.homepageSections;
+      }
+    }
+
+    doc.announcementBar = doc.announcementBar || {
+      enabled: doc.announcementBarEnabled !== undefined ? Boolean(doc.announcementBarEnabled) : true,
+      text: doc.announcementBarText || DEFAULT_SETTINGS.announcementBar.text,
+      link: doc.announcementBarLink || DEFAULT_SETTINGS.announcementBar.link,
+      isEmergency: Boolean(doc.announcementBarIsEmergency),
+    };
+
+    doc.contactInfo = doc.contactInfo || {
+      phone: doc.contactPhone || DEFAULT_SETTINGS.contactInfo.phone,
+      emergencyPhone: doc.contactEmergencyPhone || DEFAULT_SETTINGS.contactInfo.emergencyPhone,
+      email: doc.contactEmail || DEFAULT_SETTINGS.contactInfo.email,
+      address: doc.contactAddress || DEFAULT_SETTINGS.contactInfo.address,
+      city: doc.contactCity || DEFAULT_SETTINGS.contactInfo.city,
+      state: doc.contactState || DEFAULT_SETTINGS.contactInfo.state,
+      pincode: doc.contactPincode || DEFAULT_SETTINGS.contactInfo.pincode,
+      mapsEmbedUrl: doc.contactMapsEmbedUrl || DEFAULT_SETTINGS.contactInfo.mapsEmbedUrl,
+      officeHours: doc.contactOfficeHours || DEFAULT_SETTINGS.contactInfo.officeHours,
+    };
+
+    doc.socialLinks = doc.socialLinks || {
+      youtube: doc.socialYoutube || DEFAULT_SETTINGS.socialLinks.youtube,
+      facebook: doc.socialFacebook || DEFAULT_SETTINGS.socialLinks.facebook,
+      instagram: doc.socialInstagram || DEFAULT_SETTINGS.socialLinks.instagram,
+      twitter: doc.socialTwitter || DEFAULT_SETTINGS.socialLinks.twitter,
+      telegram: doc.socialTelegram || DEFAULT_SETTINGS.socialLinks.telegram,
+      whatsapp: doc.socialWhatsapp || DEFAULT_SETTINGS.socialLinks.whatsapp,
+    };
+
+    doc.footer = doc.footer || {
+      aboutShort: doc.footerAboutShort || DEFAULT_SETTINGS.footer.aboutShort,
+      disclaimer: doc.footerDisclaimer || DEFAULT_SETTINGS.footer.disclaimer,
+      copyrightText: doc.footerCopyrightText || DEFAULT_SETTINGS.footer.copyrightText,
+    };
+
+    doc.appConfig = doc.appConfig || {
+      androidApkUrl: doc.appAndroidApkUrl || DEFAULT_SETTINGS.appConfig.androidApkUrl,
+      apkVersion: doc.appApkVersion || DEFAULT_SETTINGS.appConfig.apkVersion,
+      appPromoTitle: doc.appPromoTitle || DEFAULT_SETTINGS.appConfig.appPromoTitle,
+      appPromoSubtitle: doc.appPromoSubtitle || DEFAULT_SETTINGS.appConfig.appPromoSubtitle,
+    };
+
+    doc.homepageSections = hpSections || DEFAULT_SETTINGS.homepageSections;
+    doc.heroBanners = doc.heroBanners || DEFAULT_SETTINGS.heroBanners;
+
+    return doc;
+  }
+
+  async findOne(filter = {}) {
+    const doc = await super.findOne(filter);
+    if (doc) {
+      if (isDbConnected()) {
+        try {
+          const banners = await query(
+            'SELECT * FROM `hero_banners` WHERE `settings_id` = ? ORDER BY `display_order` ASC',
+            [doc.id || 'default']
+          );
+          if (banners && banners.length > 0) {
+            doc.heroBanners = banners.map((b) => ({
+              id: b.id,
+              title: b.title,
+              subtitle: b.subtitle,
+              imageUrl: b.image_url,
+              ctaText: b.cta_text,
+              ctaLink: b.cta_link,
+              order: b.display_order,
+              active: Boolean(b.is_active),
+            }));
+          }
+        } catch (e) {}
+      }
+      return doc;
+    }
+    return this.hydrate({ ...DEFAULT_SETTINGS });
+  }
+
+  async updateSettings(body) {
+    let settings = await this.findOne();
+    if (!settings) {
+      settings = await this.create({ ...DEFAULT_SETTINGS, ...body, id: 'default' });
+      return settings;
+    }
+
+    const flat = {};
+    if (body.organizationName) flat.organization_name = body.organizationName;
+    if (body.tagline) flat.tagline = body.tagline;
+    if (body.logoUrl) flat.logo_url = body.logoUrl;
+
+    if (body.announcementBar) {
+      if (body.announcementBar.enabled !== undefined) flat.announcement_bar_enabled = body.announcementBar.enabled ? 1 : 0;
+      if (body.announcementBar.text !== undefined) flat.announcement_bar_text = body.announcementBar.text;
+      if (body.announcementBar.link !== undefined) flat.announcement_bar_link = body.announcementBar.link;
+      if (body.announcementBar.isEmergency !== undefined) flat.announcement_bar_is_emergency = body.announcementBar.isEmergency ? 1 : 0;
+    }
+
+    if (body.contactInfo) {
+      if (body.contactInfo.phone) flat.contact_phone = body.contactInfo.phone;
+      if (body.contactInfo.emergencyPhone) flat.contact_emergency_phone = body.contactInfo.emergencyPhone;
+      if (body.contactInfo.email) flat.contact_email = body.contactInfo.email;
+      if (body.contactInfo.address) flat.contact_address = body.contactInfo.address;
+      if (body.contactInfo.city) flat.contact_city = body.contactInfo.city;
+      if (body.contactInfo.state) flat.contact_state = body.contactInfo.state;
+      if (body.contactInfo.pincode) flat.contact_pincode = body.contactInfo.pincode;
+      if (body.contactInfo.mapsEmbedUrl) flat.contact_maps_embed_url = body.contactInfo.mapsEmbedUrl;
+      if (body.contactInfo.officeHours) flat.contact_office_hours = body.contactInfo.officeHours;
+    }
+
+    if (body.socialLinks) {
+      if (body.socialLinks.youtube) flat.social_youtube = body.socialLinks.youtube;
+      if (body.socialLinks.facebook) flat.social_facebook = body.socialLinks.facebook;
+      if (body.socialLinks.instagram) flat.social_instagram = body.socialLinks.instagram;
+      if (body.socialLinks.twitter) flat.social_twitter = body.socialLinks.twitter;
+      if (body.socialLinks.telegram) flat.social_telegram = body.socialLinks.telegram;
+      if (body.socialLinks.whatsapp) flat.social_whatsapp = body.socialLinks.whatsapp;
+    }
+
+    if (body.homepageSections) {
+      flat.homepage_sections = JSON.stringify(body.homepageSections);
+    }
+
+    await this.findByIdAndUpdate(settings.id || 'default', flat);
+    return this.findOne();
+  }
+}
+
+export const SiteSettings = new SiteSettingsRepository();

@@ -14,6 +14,7 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "npm --prefix client run build",
     "build:client": "npm --prefix client run build",
+    "migrate:mongo-to-mysql": "node scripts/migrate-mongodb-to-mysql.js",
     "start": "npm --prefix server start"
   },
   "devDependencies": {

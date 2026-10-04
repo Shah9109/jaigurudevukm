@@ -1,112 +1,73 @@
-import mongoose from 'mongoose';
+import { BaseRepository } from './BaseRepository.js';
 
-const eventSchema = new mongoose.Schema(
+export const DUMMY_EVENTS = [
   {
-    title: {
-      type: String,
-      required: [true, 'Event title is required'],
-      trim: true,
-      maxlength: [200, 'Title cannot exceed 200 characters'],
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-      index: true,
-    },
-    description: {
-      type: String,
-      required: [true, 'Event description is required'],
-    },
-    bannerImage: {
-      type: String,
-      default: '',
-    },
-    startDate: {
-      type: Date,
-      required: [true, 'Start date is required'],
-      index: true,
-    },
-    endDate: {
-      type: Date,
-      default: null,
-    },
-    startTime: {
-      type: String,
-      default: '',
-    },
-    endTime: {
-      type: String,
-      default: '',
-    },
-    location: {
-      type: String,
-      required: [true, 'Location name is required'],
-      trim: true,
-    },
-    address: {
-      type: String,
-      default: '',
-      trim: true,
-    },
-    city: {
-      type: String,
-      default: '',
-      trim: true,
-      index: true,
-    },
-    state: {
-      type: String,
-      default: 'Uttar Pradesh',
-      trim: true,
-      index: true,
-    },
-    pincode: {
-      type: String,
-      default: '',
-      trim: true,
-    },
-    mapUrl: {
-      type: String,
-      default: '',
-      trim: true,
-    },
-    contactNumber: {
-      type: String,
-      default: '',
-      trim: true,
-    },
-    organizer: {
-      type: String,
-      default: 'Jaigurudev Ashram',
-      trim: true,
-    },
-    registrationUrl: {
-      type: String,
-      default: '',
-      trim: true,
-    },
-    instructions: {
-      type: String,
-      default: '',
-    },
-    status: {
-      type: String,
-      enum: ['upcoming', 'ongoing', 'completed', 'cancelled'],
-      default: 'upcoming',
-      index: true,
-    },
-    isFeatured: {
-      type: Boolean,
-      default: false,
-      index: true,
-    },
+    id: '64f1a2b3c4d5e6f7a8b9c201',
+    _id: '64f1a2b3c4d5e6f7a8b9c201',
+    slug: 'annual-bhandara-mahotsav-ujjain',
+    title: 'वार्षिक पावन भंडारा महोत्सव एवं विशाल संत समागम — उज्जैन',
+    description: 'उज्जैन आश्रम में आयोजित होने वाला देश-विदेश के लाखों श्रद्धालुओं का भव्य त्रिदिवसीय संत समागम। निरंतर गुरु का अखंड लंगर, अमृत वाणी, नामदान एवं आध्यात्मिक प्रश्नोत्तरी सत्र।',
+    startDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+    endDate: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000).toISOString(),
+    startTime: '06:00 AM',
+    endTime: '09:00 PM',
+    location: 'बाबा जयगुरुदेव आश्रम, मक्सी रोड, उज्जैन (म.प्र.)',
+    city: 'उज्जैन (Ujjain)',
+    state: 'मध्य प्रदेश (Madhya Pradesh)',
+    status: 'upcoming',
+    expectedAttendees: '2,50,000+ श्रद्धालु',
+    bannerImage: '/images/sant_vanshavali.jpg',
+    isFeatured: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    timestamps: true,
-  }
-);
+    id: '64f1a2b3c4d5e6f7a8b9c202',
+    _id: '64f1a2b3c4d5e6f7a8b9c202',
+    slug: 'guru-purnima-mahotsav-jaipur',
+    title: 'पावन गुरु पूर्णिमा महा-महोत्सव — जयपुर आश्रम',
+    description: 'सतगुरु के चरणों में कृतज्ञता ज्ञापन, पावन गुरु वंदना, नाम-साधना दिशा-निर्देश एवं राजस्थान संगत का भव्य एकत्रीकरण।',
+    startDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
+    endDate: new Date(Date.now() + 47 * 24 * 60 * 60 * 1000).toISOString(),
+    startTime: '08:00 AM',
+    endTime: '08:00 PM',
+    location: 'जयगुरुदेव आश्रम, ठीकरिया, जयपुर',
+    city: 'जयपुर (Jaipur)',
+    state: 'राजस्थान (Rajasthan)',
+    status: 'upcoming',
+    expectedAttendees: '1,50,000+ श्रद्धालु',
+    bannerImage: '/images/sant_vanshavali.jpg',
+    isFeatured: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 
-export const Event = mongoose.model('Event', eventSchema);
+class EventRepository extends BaseRepository {
+  constructor() {
+    super('events', {}, DUMMY_EVENTS);
+  }
+
+  hydrate(row) {
+    const doc = super.hydrate(row);
+    if (!doc) return null;
+    if (doc.isFeatured !== undefined) doc.isFeatured = Boolean(doc.isFeatured);
+    return doc;
+  }
+
+  async create(data) {
+    const eventData = { ...data };
+    if (!eventData.slug && eventData.title) {
+      eventData.slug =
+        eventData.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '') +
+        '-' +
+        Date.now();
+    }
+    return super.create(eventData);
+  }
+}
+
+export const Event = new EventRepository();

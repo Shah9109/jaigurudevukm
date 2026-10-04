@@ -1,43 +1,14 @@
-import mongoose from 'mongoose';
+import { BaseRepository } from './BaseRepository.js';
 
-const activityLogSchema = new mongoose.Schema(
-  {
-    adminId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Admin',
-      required: false,
-    },
-    adminEmail: {
-      type: String,
-      default: 'system',
-    },
-    action: {
-      type: String,
-      required: true,
-      enum: ['LOGIN', 'LOGOUT', 'CREATE', 'UPDATE', 'DELETE', 'PUBLISH', 'UNPUBLISH', 'UPLOAD', 'SETTINGS_CHANGE'],
-      index: true,
-    },
-    resource: {
-      type: String,
-      required: true,
-      index: true,
-    },
-    resourceId: {
-      type: String,
-      default: '',
-    },
-    details: {
-      type: String,
-      default: '',
-    },
-    ipAddress: {
-      type: String,
-      default: '',
-    },
-  },
-  {
-    timestamps: { createdAt: true, updatedAt: false },
+class ActivityLogRepository extends BaseRepository {
+  constructor() {
+    super('activity_logs', {}, []);
   }
-);
 
-export const ActivityLog = mongoose.model('ActivityLog', activityLogSchema);
+  hydrate(row) {
+    const doc = super.hydrate(row);
+    return doc;
+  }
+}
+
+export const ActivityLog = new ActivityLogRepository();
