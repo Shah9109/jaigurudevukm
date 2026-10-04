@@ -107,7 +107,7 @@ html, body, * {
 .animate-marquee-left {
   display: flex;
   width: max-content;
-  animation: marquee-left 90s linear infinite;
+  animation: marquee-left 280s linear infinite;
 }
 
 .animate-marquee-left:hover {
