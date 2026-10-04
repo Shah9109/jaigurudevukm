@@ -311,11 +311,11 @@ export const Home = () => {
                 संपूर्ण जयगुरुदेव वेबसाइट अब आपके मोबाइल ऐप में
               </h2>
 
-              <p className="text-sm text-stone-600 leading-relaxed font-light">
+              <p className="text-sm text-stone-700 leading-relaxed">
                 आधिकारिक जयगुरुदेव एंड्रॉइड ऐप (APK) के माध्यम से नित्य सत्संग कार्यक्रम, आश्रम आदेश, वीडियो प्रवचन, भजन-धुन, सन्त वंशावली एवं आश्रम संपर्क की समस्त जानकारी एक ही टैप में प्राप्त करें।
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-700 font-medium">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-800 font-medium">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>लाइव सत्संग एवं कार्यक्रम सारिणी</span>
@@ -337,9 +337,9 @@ export const Home = () => {
               <div className="pt-2 flex flex-wrap items-center gap-3">
                 <Link
                   to="/downloads"
-                  className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-gradient-to-r from-maroon-700 to-roseBlush-700 hover:from-maroon-800 hover:to-roseBlush-800 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all"
+                  className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-gradient-to-r from-maroon-800 to-maroon-900 hover:from-maroon-900 hover:to-maroon-950 text-white hover:text-sacredGold-200 font-semibold text-sm shadow-md hover:shadow-lg transition-all border border-sacredGold-400/40"
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="w-4 h-4 text-sacredGold-300" />
                   <span>Download Official APK (v1.0.0)</span>
                 </Link>
               </div>
@@ -347,17 +347,19 @@ export const Home = () => {
 
             {/* Devotional App Graphic Preview */}
             <div className="flex items-center justify-center">
-              <div className="relative w-64 sm:w-72 bg-white rounded-3xl p-4 shadow-2xl border-4 border-maroon-800/10 rotate-1 hover:rotate-0 transition-transform duration-300">
-                <div className="bg-gradient-to-b from-maroon-900 to-maroon-950 text-white rounded-2xl p-6 text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-sacredGold-400 mx-auto">
+              <div className="relative w-64 sm:w-72 bg-white rounded-3xl p-4 shadow-2xl border-2 border-sacredGold-300/40 rotate-1 hover:rotate-0 transition-transform duration-300">
+                <div className="bg-gradient-to-b from-[#3D0F17] via-[#2A080E] to-[#1A0508] text-white rounded-2xl p-6 text-center space-y-4 shadow-inner border border-maroon-800/60">
+                  <div className="w-18 h-18 w-20 h-20 rounded-full overflow-hidden border-2 border-sacredGold-400 mx-auto shadow-lg ring-4 ring-sacredGold-400/20">
                     <img src="/images/baba_jaigurudev.jpg" alt="Baba Jaigurudev" className="w-full h-full object-cover" />
                   </div>
-                  <span className="font-devanagari text-xl font-bold block text-red-500">जयगुरुदेव</span>
-                  <p className="text-xs text-roseBlush-200">
-                    Official Android App APK
-                  </p>
+                  <div>
+                    <span className="font-devanagari text-2xl font-bold block text-sacredGold-300 tracking-wide drop-shadow-sm">जयगुरुदेव</span>
+                    <p className="text-xs text-roseBlush-100 font-medium mt-1">
+                      Official Android App APK
+                    </p>
+                  </div>
                   <div className="pt-2">
-                    <span className="text-[11px] font-semibold text-sacredGold-300 bg-white/10 px-3 py-1 rounded-full">
+                    <span className="inline-block text-xs font-semibold text-sacredGold-300 bg-white/10 px-3.5 py-1.5 rounded-full border border-sacredGold-400/40 shadow-xs">
                       Full Website in 1 App
                     </span>
                   </div>
