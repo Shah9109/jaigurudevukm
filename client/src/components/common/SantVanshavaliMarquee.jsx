@@ -168,7 +168,7 @@ export const SantVanshavaliMarquee = () => {
         <div
           className="animate-marquee-left flex gap-4 sm:gap-6 py-2 px-4 group-hover/track:[animation-play-state:paused]"
           style={{
-            animationDuration: '280s',
+            animationDuration: '65s',
             animationPlayState: isPaused ? 'paused' : undefined,
           }}
         >

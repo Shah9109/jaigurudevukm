@@ -198,7 +198,7 @@ export const LiveStreamsMarquee = () => {
         <div
           className="animate-marquee-left flex gap-5 py-2 group-hover/track:[animation-play-state:paused]"
           style={{
-            animationDuration: '220s',
+            animationDuration: '75s',
             animationPlayState: isPaused ? 'paused' : undefined,
           }}
         >
