@@ -33,6 +33,8 @@ export const AdminSettings = () => {
     try {
       const res = await api.put('/admin/settings', settings);
       if (res.success) {
+        if (res.data) setSettings(res.data);
+        window.dispatchEvent(new Event('site-settings-updated'));
         setMessage({ type: 'success', text: 'Site settings and homepage configurations saved successfully!' });
       }
     } catch (err) {

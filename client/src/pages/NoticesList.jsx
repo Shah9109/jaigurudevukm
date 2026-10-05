@@ -13,9 +13,10 @@ import {
   ExternalLink,
   MapPin,
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  ArrowRight,
 } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import api from '../services/api';
 import SEO from '../components/common/SEO';
 import SectionTitle from '../components/common/SectionTitle';
@@ -24,10 +25,86 @@ import EventCard from '../components/cards/EventCard';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import EmptyState from '../components/common/EmptyState';
 
+const FALLBACK_ADHESH_LIST = [
+  {
+    _id: '64f1a2b3c4d5e6f7a8b9c301',
+    id: '64f1a2b3c4d5e6f7a8b9c301',
+    title: 'आश्रम आदेश सं. JGD/2026/08: आश्रम में आने वाले समस्त दर्शनार्थियों के लिए निशुल्क भंडारा एवं अनुशासन व्यवस्था',
+    referenceNumber: 'JGD/2026/08',
+    description: 'उज्जैन आश्रम केंद्रीय कार्यालय द्वारा जारी आधिकारिक निर्देश: आश्रम में सभी भक्तों के लिए 24 घंटे निशुल्क लंगर एवं आवास की पूर्ण व्यवस्था है। किसी भी सेवादार को कोई शुल्क नहीं देना है।',
+    issueDate: '2026-10-03T09:07:57.397Z',
+    issuedBy: 'केंद्रीय आश्रम कार्यालय, उज्जैन (म.प्र.)',
+    category: 'Ashram Order',
+    priority: 'Very Important',
+    isImportant: true,
+    attachmentUrl: '/downloads/ashram_adhesh_aug2026.pdf',
+  },
+  {
+    _id: '64f1a2b3c4d5e6f7a8b9c302',
+    id: '64f1a2b3c4d5e6f7a8b9c302',
+    title: 'आश्रम आदेश सं. JGD/2026/07: प्रत्येक जिले में शाकाहार प्रचार एवं गुलाबी झंडी वाहन रैलियों के संबंध में दिशा-निर्देश',
+    referenceNumber: 'JGD/2026/07',
+    description: 'सभी प्रांतीय एवं जिला कमेटियों को निर्देशित किया जाता है कि शाकाहार प्रचार हेतु गुलाबी झंडी लगाकर शांतिपूर्ण वाहन यात्राएं व जनसंपर्क अभियान चलाएं।',
+    issueDate: '2026-09-27T09:07:57.397Z',
+    issuedBy: 'परम पूज्य बाबा उमाकान्त जी महाराज के आदेशानुसार',
+    category: 'Administrative Directive',
+    priority: 'Important',
+    isImportant: false,
+    attachmentUrl: '/downloads/shakahar_nirdesh.pdf',
+  }
+];
+
+const FALLBACK_EVENTS_LIST = [
+  {
+    _id: '64f1a2b3c4d5e6f7a8b9c201',
+    id: '64f1a2b3c4d5e6f7a8b9c201',
+    slug: 'annual-bhandara-mahotsav-ujjain',
+    title: 'वार्षिक पावन भंडारा महोत्सव एवं विशाल संत समागम — उज्जैन',
+    description: 'उज्जैन आश्रम में आयोजित होने वाला देश-विदेश के लाखों श्रद्धालुओं का भव्य त्रिदिवसीय संत समागम। निरंतर गुरु का अखंड लंगर, अमृत वाणी, नामदान एवं आध्यात्मिक प्रश्नोत्तरी सत्र।',
+    startDate: '2026-10-20T09:07:57.396Z',
+    endDate: '2026-10-23T09:07:57.397Z',
+    startTime: '06:00 AM',
+    endTime: '09:00 PM',
+    location: 'बाबा जयगुरुदेव आश्रम, मक्सी रोड, उज्जैन (म.प्र.)',
+    city: 'उज्जैन (Ujjain)',
+    state: 'मध्य प्रदेश (Madhya Pradesh)',
+    status: 'upcoming',
+    expectedAttendees: '2,50,000+ श्रद्धालु',
+    bannerImage: '/images/sant_vanshavali.jpg',
+    isFeatured: true,
+  },
+  {
+    _id: '64f1a2b3c4d5e6f7a8b9c202',
+    id: '64f1a2b3c4d5e6f7a8b9c202',
+    slug: 'guru-purnima-mahotsav-jaipur',
+    title: 'पावन गुरु पूर्णिमा महा-महोत्सव — जयपुर आश्रम',
+    description: 'सतगुरु के चरणों में कृतज्ञता ज्ञापन, पावन गुरु वंदना, नाम-साधना दिशा-निर्देश एवं राजस्थान संगत का भव्य एकत्रीकरण।',
+    startDate: '2026-11-19T09:07:57.397Z',
+    endDate: '2026-11-21T09:07:57.397Z',
+    startTime: '08:00 AM',
+    endTime: '08:00 PM',
+    location: 'जयगुरुदेव आश्रम, ठीकरिया, जयपुर',
+    city: 'जयपुर (Jaipur)',
+    state: 'राजस्थान (Rajasthan)',
+    status: 'upcoming',
+    expectedAttendees: '1,50,000+ श्रद्धालु',
+    bannerImage: '/images/sant_vanshavali.jpg',
+    isFeatured: true,
+  }
+];
+
 export const NoticesList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'notices'; // 'notices', 'adhesh', 'events'
   const [activeTab, setActiveTab] = useState(initialTab);
+
+  // Sync tab with URL query parameter
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && ['notices', 'adhesh', 'events'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   // Notices State
   const [notices, setNotices] = useState([]);
@@ -36,12 +113,12 @@ export const NoticesList = () => {
   const [noticeSearch, setNoticeSearch] = useState('');
 
   // Adhesh State
-  const [adheshList, setAdheshList] = useState([]);
+  const [adheshList, setAdheshList] = useState(FALLBACK_ADHESH_LIST);
   const [adheshLoading, setAdheshLoading] = useState(false);
   const [adheshSearch, setAdheshSearch] = useState('');
 
   // Events State
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState(FALLBACK_EVENTS_LIST);
   const [eventsLoading, setEventsLoading] = useState(false);
   const [eventStatusFilter, setEventStatusFilter] = useState('upcoming');
   const [eventSearch, setEventSearch] = useState('');
@@ -91,45 +168,41 @@ export const NoticesList = () => {
     fetchNotices();
   }, [priorityFilter]);
 
-  // Fetch Adhesh when Adhesh tab is opened
+  // Fetch Adhesh
   useEffect(() => {
-    if (activeTab === 'adhesh' && adheshList.length === 0) {
-      const fetchAdhesh = async () => {
-        setAdheshLoading(true);
-        try {
-          const res = await api.get('/adhesh');
-          if (res.success && res.data) {
-            setAdheshList(res.data);
-          }
-        } catch (err) {
-          console.error('Error fetching adhesh:', err);
-        } finally {
-          setAdheshLoading(false);
+    const fetchAdhesh = async () => {
+      setAdheshLoading(true);
+      try {
+        const res = await api.get('/adhesh');
+        if (res.success && res.data && Array.isArray(res.data) && res.data.length > 0) {
+          setAdheshList(res.data);
         }
-      };
-      fetchAdhesh();
-    }
-  }, [activeTab, adheshList.length]);
+      } catch (err) {
+        console.warn('Error fetching adhesh, using fallback:', err);
+      } finally {
+        setAdheshLoading(false);
+      }
+    };
+    fetchAdhesh();
+  }, []);
 
-  // Fetch Events when Events tab is opened
+  // Fetch Events
   useEffect(() => {
-    if (activeTab === 'events') {
-      const fetchEvents = async () => {
-        setEventsLoading(true);
-        try {
-          const res = await api.get(`/events?status=${eventStatusFilter === 'all' ? '' : eventStatusFilter}`);
-          if (res.success && res.data) {
-            setEvents(res.data);
-          }
-        } catch (err) {
-          console.error('Error loading events:', err);
-        } finally {
-          setEventsLoading(false);
+    const fetchEvents = async () => {
+      setEventsLoading(true);
+      try {
+        const res = await api.get(`/events?status=${eventStatusFilter === 'all' ? '' : eventStatusFilter}`);
+        if (res.success && res.data && Array.isArray(res.data) && res.data.length > 0) {
+          setEvents(res.data);
         }
-      };
-      fetchEvents();
-    }
-  }, [activeTab, eventStatusFilter]);
+      } catch (err) {
+        console.warn('Error loading events, using fallback:', err);
+      } finally {
+        setEventsLoading(false);
+      }
+    };
+    fetchEvents();
+  }, [eventStatusFilter]);
 
   // Filtered data
   const filteredNotices = notices.filter((n) =>

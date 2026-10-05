@@ -1,5 +1,12 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { BaseRepository } from './BaseRepository.js';
 import { query, isDbConnected } from '../config/db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const SETTINGS_CACHE_PATH = path.join(__dirname, '../data/siteSettings.json');
 
 const DEFAULT_SETTINGS = {
   id: 'default',
@@ -71,9 +78,50 @@ const DEFAULT_SETTINGS = {
   },
 };
 
+const loadCachedSettings = () => {
+  try {
+    if (fs.existsSync(SETTINGS_CACHE_PATH)) {
+      const raw = fs.readFileSync(SETTINGS_CACHE_PATH, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return {
+          ...DEFAULT_SETTINGS,
+          ...parsed,
+          announcementBar: {
+            ...DEFAULT_SETTINGS.announcementBar,
+            ...(parsed.announcementBar || {}),
+          },
+          contactInfo: {
+            ...DEFAULT_SETTINGS.contactInfo,
+            ...(parsed.contactInfo || {}),
+          },
+          homepageSections: {
+            ...DEFAULT_SETTINGS.homepageSections,
+            ...(parsed.homepageSections || {}),
+          },
+        };
+      }
+    }
+  } catch (e) {
+    console.warn('[SiteSettings] Failed to load cached settings:', e.message);
+  }
+  return { ...DEFAULT_SETTINGS };
+};
+
+const saveCachedSettings = (settingsData) => {
+  try {
+    const dir = path.dirname(SETTINGS_CACHE_PATH);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(SETTINGS_CACHE_PATH, JSON.stringify(settingsData, null, 2), 'utf8');
+  } catch (e) {
+    console.warn('[SiteSettings] Failed to save settings to disk:', e.message);
+  }
+};
+
 class SiteSettingsRepository extends BaseRepository {
   constructor() {
-    super('site_settings', {}, [DEFAULT_SETTINGS]);
+    const initial = loadCachedSettings();
+    super('site_settings', {}, [initial]);
   }
 
   hydrate(row) {
@@ -90,11 +138,20 @@ class SiteSettingsRepository extends BaseRepository {
       }
     }
 
-    doc.announcementBar = doc.announcementBar || {
-      enabled: doc.announcementBarEnabled !== undefined ? Boolean(doc.announcementBarEnabled) : true,
-      text: doc.announcementBarText || DEFAULT_SETTINGS.announcementBar.text,
-      link: doc.announcementBarLink || DEFAULT_SETTINGS.announcementBar.link,
-      isEmergency: Boolean(doc.announcementBarIsEmergency),
+    const existingAb = doc.announcementBar || {};
+    doc.announcementBar = {
+      enabled: doc.announcementBarEnabled !== undefined
+        ? Boolean(doc.announcementBarEnabled)
+        : (doc.announcement_bar_enabled !== undefined
+            ? Boolean(doc.announcement_bar_enabled)
+            : (existingAb.enabled !== undefined ? Boolean(existingAb.enabled) : DEFAULT_SETTINGS.announcementBar.enabled)),
+      text: doc.announcementBarText || doc.announcement_bar_text || existingAb.text || DEFAULT_SETTINGS.announcementBar.text,
+      link: doc.announcementBarLink || doc.announcement_bar_link || existingAb.link || DEFAULT_SETTINGS.announcementBar.link,
+      isEmergency: doc.announcementBarIsEmergency !== undefined
+        ? Boolean(doc.announcementBarIsEmergency)
+        : (doc.announcement_bar_is_emergency !== undefined
+            ? Boolean(doc.announcement_bar_is_emergency)
+            : Boolean(existingAb.isEmergency)),
     };
 
     doc.contactInfo = doc.contactInfo || {
@@ -162,55 +219,99 @@ class SiteSettingsRepository extends BaseRepository {
       }
       return doc;
     }
-    return this.hydrate({ ...DEFAULT_SETTINGS });
+    return this.hydrate(loadCachedSettings());
   }
 
   async updateSettings(body) {
     let settings = await this.findOne();
     if (!settings) {
       settings = await this.create({ ...DEFAULT_SETTINGS, ...body, id: 'default' });
+      saveCachedSettings(settings);
       return settings;
     }
 
-    const flat = {};
-    if (body.organizationName) flat.organization_name = body.organizationName;
-    if (body.tagline) flat.tagline = body.tagline;
-    if (body.logoUrl) flat.logo_url = body.logoUrl;
+    const updated = {
+      ...settings,
+      ...body,
+      announcementBar: {
+        ...(settings.announcementBar || DEFAULT_SETTINGS.announcementBar),
+        ...(body.announcementBar || {}),
+      },
+      contactInfo: {
+        ...(settings.contactInfo || DEFAULT_SETTINGS.contactInfo),
+        ...(body.contactInfo || {}),
+      },
+      socialLinks: {
+        ...(settings.socialLinks || DEFAULT_SETTINGS.socialLinks),
+        ...(body.socialLinks || {}),
+      },
+      footer: {
+        ...(settings.footer || DEFAULT_SETTINGS.footer),
+        ...(body.footer || {}),
+      },
+      homepageSections: {
+        ...(settings.homepageSections || DEFAULT_SETTINGS.homepageSections),
+        ...(body.homepageSections || {}),
+      },
+      appConfig: {
+        ...(settings.appConfig || DEFAULT_SETTINGS.appConfig),
+        ...(body.appConfig || {}),
+      },
+    };
 
-    if (body.announcementBar) {
-      if (body.announcementBar.enabled !== undefined) flat.announcement_bar_enabled = body.announcementBar.enabled ? 1 : 0;
-      if (body.announcementBar.text !== undefined) flat.announcement_bar_text = body.announcementBar.text;
-      if (body.announcementBar.link !== undefined) flat.announcement_bar_link = body.announcementBar.link;
-      if (body.announcementBar.isEmergency !== undefined) flat.announcement_bar_is_emergency = body.announcementBar.isEmergency ? 1 : 0;
+    if (isDbConnected()) {
+      const flat = {};
+      if (body.organizationName) flat.organization_name = body.organizationName;
+      if (body.tagline) flat.tagline = body.tagline;
+      if (body.logoUrl) flat.logo_url = body.logoUrl;
+
+      if (body.announcementBar) {
+        if (body.announcementBar.enabled !== undefined) flat.announcement_bar_enabled = body.announcementBar.enabled ? 1 : 0;
+        if (body.announcementBar.text !== undefined) flat.announcement_bar_text = body.announcementBar.text;
+        if (body.announcementBar.link !== undefined) flat.announcement_bar_link = body.announcementBar.link;
+        if (body.announcementBar.isEmergency !== undefined) flat.announcement_bar_is_emergency = body.announcementBar.isEmergency ? 1 : 0;
+      }
+
+      if (body.contactInfo) {
+        if (body.contactInfo.phone) flat.contact_phone = body.contactInfo.phone;
+        if (body.contactInfo.emergencyPhone) flat.contact_emergency_phone = body.contactInfo.emergencyPhone;
+        if (body.contactInfo.email) flat.contact_email = body.contactInfo.email;
+        if (body.contactInfo.address) flat.contact_address = body.contactInfo.address;
+        if (body.contactInfo.city) flat.contact_city = body.contactInfo.city;
+        if (body.contactInfo.state) flat.contact_state = body.contactInfo.state;
+        if (body.contactInfo.pincode) flat.contact_pincode = body.contactInfo.pincode;
+        if (body.contactInfo.mapsEmbedUrl) flat.contact_maps_embed_url = body.contactInfo.mapsEmbedUrl;
+        if (body.contactInfo.officeHours) flat.contact_office_hours = body.contactInfo.officeHours;
+      }
+
+      if (body.socialLinks) {
+        if (body.socialLinks.youtube) flat.social_youtube = body.socialLinks.youtube;
+        if (body.socialLinks.facebook) flat.social_facebook = body.socialLinks.facebook;
+        if (body.socialLinks.instagram) flat.social_instagram = body.socialLinks.instagram;
+        if (body.socialLinks.twitter) flat.social_twitter = body.socialLinks.twitter;
+        if (body.socialLinks.telegram) flat.social_telegram = body.socialLinks.telegram;
+        if (body.socialLinks.whatsapp) flat.social_whatsapp = body.socialLinks.whatsapp;
+      }
+
+      if (body.homepageSections) {
+        flat.homepage_sections = JSON.stringify(body.homepageSections);
+      }
+
+      await this.findByIdAndUpdate(settings.id || 'default', flat);
     }
 
-    if (body.contactInfo) {
-      if (body.contactInfo.phone) flat.contact_phone = body.contactInfo.phone;
-      if (body.contactInfo.emergencyPhone) flat.contact_emergency_phone = body.contactInfo.emergencyPhone;
-      if (body.contactInfo.email) flat.contact_email = body.contactInfo.email;
-      if (body.contactInfo.address) flat.contact_address = body.contactInfo.address;
-      if (body.contactInfo.city) flat.contact_city = body.contactInfo.city;
-      if (body.contactInfo.state) flat.contact_state = body.contactInfo.state;
-      if (body.contactInfo.pincode) flat.contact_pincode = body.contactInfo.pincode;
-      if (body.contactInfo.mapsEmbedUrl) flat.contact_maps_embed_url = body.contactInfo.mapsEmbedUrl;
-      if (body.contactInfo.officeHours) flat.contact_office_hours = body.contactInfo.officeHours;
+    // Update in-memory fallback
+    const idx = this.fallbackItems.findIndex((i) => i.id === (settings.id || 'default') || i._id === (settings.id || 'default'));
+    if (idx !== -1) {
+      this.fallbackItems[idx] = updated;
+    } else {
+      this.fallbackItems.unshift(updated);
     }
 
-    if (body.socialLinks) {
-      if (body.socialLinks.youtube) flat.social_youtube = body.socialLinks.youtube;
-      if (body.socialLinks.facebook) flat.social_facebook = body.socialLinks.facebook;
-      if (body.socialLinks.instagram) flat.social_instagram = body.socialLinks.instagram;
-      if (body.socialLinks.twitter) flat.social_twitter = body.socialLinks.twitter;
-      if (body.socialLinks.telegram) flat.social_telegram = body.socialLinks.telegram;
-      if (body.socialLinks.whatsapp) flat.social_whatsapp = body.socialLinks.whatsapp;
-    }
+    // Persist to disk
+    saveCachedSettings(updated);
 
-    if (body.homepageSections) {
-      flat.homepage_sections = JSON.stringify(body.homepageSections);
-    }
-
-    await this.findByIdAndUpdate(settings.id || 'default', flat);
-    return this.findOne();
+    return updated;
   }
 }
 

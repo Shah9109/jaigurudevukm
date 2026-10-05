@@ -5,10 +5,12 @@ import {
   submitContactEnquiry,
   globalSearch,
 } from '../controllers/generalContentController.js';
+import { getSettings } from '../controllers/adminSettingsController.js';
 import { contactLimiter } from '../middleware/security.js';
 
 const router = express.Router();
 
+router.get('/settings', getSettings);
 router.get('/documents', getDocuments);
 router.get('/faq', getFAQs);
 router.post('/contact', contactLimiter, submitContactEnquiry);

@@ -11,7 +11,8 @@ import {
   CheckCircle2,
   ShieldCheck,
   Building,
-  Tag
+  Tag,
+  ExternalLink,
 } from 'lucide-react';
 import api from '../services/api';
 import SEO from '../components/common/SEO';

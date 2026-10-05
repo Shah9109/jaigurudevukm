@@ -1,0 +1,70 @@
+{
+  "id": "default",
+  "_id": "default",
+  "organizationName": "जयगुरुदेव धर्म प्रचारक संस्था (Jaigurudev Sanstha)",
+  "tagline": "सत्य, दया, धर्म और नाम-साधना का पावन मार्ग",
+  "logoUrl": "/logo.svg",
+  "announcementBar": {
+    "enabled": true,
+    "text": "श्री कृष्ण जन्माष्टमी पावन सत्संग कार्यक्रम — आगरा (Agra) में 2 से 4 तक आयोजित।",
+    "link": "/satsang",
+    "isEmergency": false
+  },
+  "heroBanners": [
+    {
+      "id": "banner-001",
+      "title": "सत्य, दया, धर्म और नाम-साधना का पावन मार्ग",
+      "subtitle": "Welcome to the Official Spiritual Portal of Jaigurudev Sanstha. Join our daily satsang, explore divine teachings, and immerse in spiritual upliftment.",
+      "imageUrl": "https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1600&q=80",
+      "ctaText": "Upcoming Satsang",
+      "ctaLink": "/satsang",
+      "order": 1,
+      "active": true
+    }
+  ],
+  "contactInfo": {
+    "phone": "+91-9754700200",
+    "emergencyPhone": "+91-9575600700",
+    "email": "contact@jaigurudev.org",
+    "address": "बाबा जयगुरुदेव आश्रम, पिंगलेश्वर रेलवे स्टेशन के सामने, मक्सी रोड",
+    "city": "उज्जैन",
+    "state": "मध्य प्रदेश",
+    "pincode": "456001",
+    "mapsEmbedUrl": "https://maps.google.com",
+    "officeHours": "Daily 06:00 AM – 08:00 PM"
+  },
+  "socialLinks": {
+    "youtube": "https://www.youtube.com/c/jaigurudevukm",
+    "facebook": "https://facebook.com",
+    "instagram": "https://instagram.com",
+    "twitter": "https://x.com",
+    "telegram": "https://telegram.org",
+    "whatsapp": "https://whatsapp.com/channel/0029VaAcAA40QeadmEmp9y3c"
+  },
+  "footer": {
+    "aboutShort": "Jaigurudev Sanstha is dedicated to spiritual upliftment, humanitarian service, vegetarianism, and righteous living under the divine guidance of the Master.",
+    "disclaimer": "Official informational portal of Jaigurudev Sanstha. No registration fee is charged for attending public Satsang.",
+    "copyrightText": "© 2026 Jaigurudev Sanstha. All rights reserved."
+  },
+  "homepageSections": {
+    "announcementBar": true,
+    "heroSlider": true,
+    "welcomeMessage": true,
+    "upcomingSatsang": true,
+    "upcomingEvents": true,
+    "importantNotices": true,
+    "ashramAdhesh": true,
+    "featuredVideos": true,
+    "audioPlayer": false,
+    "photoGallery": true,
+    "appPromotion": true,
+    "contactSection": true
+  },
+  "appConfig": {
+    "androidApkUrl": "/downloads/jaigurudev-sadhana.apk",
+    "apkVersion": "1.0.0",
+    "appPromoTitle": "Download Jaigurudev Sadhana App",
+    "appPromoSubtitle": "Your daily companion for Naam-Dhyan, spiritual alarms, timer, and daily reports."
+  },
+  "Id": "default"
+}
