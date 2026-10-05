@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import ScrollToTop from './components/common/ScrollToTop';
 
 // Public Layout & Pages
 import MainLayout from './components/layout/MainLayout';
@@ -46,6 +47,7 @@ import AdminKnowledge from './admin/AdminKnowledge';
 export default function App() {
   return (
     <AuthProvider>
+      <ScrollToTop />
       <Routes>
         {/* 1. Public Spiritual Organization Website */}
         <Route path="/" element={<MainLayout />}>
