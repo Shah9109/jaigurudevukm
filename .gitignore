@@ -41,3 +41,4 @@ Thumbs.db
 uploads/
 .cache
 .system_generated
+server/src/data/*.json
