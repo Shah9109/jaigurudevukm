@@ -19,6 +19,9 @@ import {
   createAudio,
   updateAudio,
   deleteAudio,
+  createGallery,
+  updateGallery,
+  deleteGallery,
 } from '../controllers/adminCrudController.js';
 import {
   getSettings,
@@ -66,6 +69,11 @@ router.delete('/videos/:id', deleteVideo);
 router.post('/audio', createAudio);
 router.put('/audio/:id', updateAudio);
 router.delete('/audio/:id', deleteAudio);
+
+// Gallery CRUD
+router.post('/gallery', createGallery);
+router.put('/gallery/:id', updateGallery);
+router.delete('/gallery/:id', deleteGallery);
 
 // Site Settings & Homepage Sections
 router.get('/settings', getSettings);

@@ -37,6 +37,7 @@ import AdminNotices from './admin/AdminNotices';
 import AdminAdhesh from './admin/AdminAdhesh';
 import AdminVideos from './admin/AdminVideos';
 import AdminAudio from './admin/AdminAudio';
+import AdminGallery from './admin/AdminGallery';
 import AdminSettings from './admin/AdminSettings';
 import AdminActivityLogs from './admin/AdminActivityLogs';
 import AdminEnquiries from './admin/AdminEnquiries';
@@ -96,6 +97,7 @@ export default function App() {
           <Route path="adhesh" element={<AdminAdhesh />} />
           <Route path="videos" element={<AdminVideos />} />
           <Route path="audio" element={<AdminAudio />} />
+          <Route path="gallery" element={<AdminGallery />} />
           <Route path="knowledge" element={<AdminKnowledge />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="homepage-builder" element={<AdminSettings />} />

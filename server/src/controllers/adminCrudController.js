@@ -5,6 +5,7 @@ import {
   Event,
   Video,
   Audio,
+  Gallery,
   ActivityLog,
 } from '../models/index.js';
 import { sendSuccess, sendError } from '../utils/apiResponse.js';
@@ -224,3 +225,37 @@ export const deleteAudio = async (req, res, next) => {
     next(error);
   }
 };
+
+// ----------------- GALLERY CRUD -----------------
+export const createGallery = async (req, res, next) => {
+  try {
+    const gallery = await Gallery.create(req.body);
+    await logActivity(req, 'CREATE', 'GALLERY', gallery._id || gallery.id, `Added Gallery Photo: ${gallery.title || gallery.caption}`);
+    return sendSuccess(res, 'Photo added to gallery successfully', gallery, 201);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateGallery = async (req, res, next) => {
+  try {
+    const gallery = await Gallery.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!gallery) return sendError(res, 'Gallery item not found', 404);
+    await logActivity(req, 'UPDATE', 'GALLERY', gallery._id || gallery.id, `Updated Gallery Photo: ${gallery.title || gallery.caption}`);
+    return sendSuccess(res, 'Gallery photo updated successfully', gallery);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteGallery = async (req, res, next) => {
+  try {
+    const gallery = await Gallery.findByIdAndDelete(req.params.id);
+    if (!gallery) return sendError(res, 'Gallery item not found', 404);
+    await logActivity(req, 'DELETE', 'GALLERY', req.params.id, `Deleted Gallery Photo: ${gallery.title || gallery.caption}`);
+    return sendSuccess(res, 'Gallery photo deleted successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
