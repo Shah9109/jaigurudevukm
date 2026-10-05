@@ -14,63 +14,6 @@ const CATEGORIES = [
   'Seva & Charity',
 ];
 
-const DEFAULT_SAMPLE_PHOTOS = [
-  {
-    id: 'sample-001',
-    url: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80',
-    caption: 'बाबा जयगुरुदेव आश्रम उज्जैन प्रांगण दर्शन',
-    title: 'बाबा जयगुरुदेव आश्रम उज्जैन प्रांगण दर्शन',
-    category: 'Ashram Darshan',
-    eventDate: '2026-08-15',
-    description: 'उज्जैन मुख्य आश्रम का पावन एवं भव्य दृश्य।',
-  },
-  {
-    id: 'sample-002',
-    url: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
-    caption: 'वार्षिक पावन भंडारा संत समागम',
-    title: 'वार्षिक पावन भंडारा संत समागम',
-    category: 'Bhandara & Utsav',
-    eventDate: '2026-07-21',
-    description: 'देश-विदेश से पधारे लाखों श्रद्धालुओं का अखंड लंगर एवं भंडारा प्रसाद।',
-  },
-  {
-    id: 'sample-003',
-    url: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=800&q=80',
-    caption: 'प्रातः कालीन नाम-साधना एवं आरती',
-    title: 'प्रातः कालीन नाम-साधना एवं आरती',
-    category: 'Satsang Samagam',
-    eventDate: '2026-09-01',
-    description: 'संत वचनों के श्रवण एवं ध्यान-भजन में लीन साधक संगत।',
-  },
-  {
-    id: 'sample-004',
-    url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80',
-    caption: 'जीव दया एवं शाकाहार रथ यात्रा',
-    title: 'जीव दया एवं शाकाहार रथ यात्रा',
-    category: 'Seva & Charity',
-    eventDate: '2026-06-10',
-    description: 'जन-जन में शाकाहार और नशामुक्ति का पावन संदेश फैलाने वाली रथ यात्रा।',
-  },
-  {
-    id: 'sample-005',
-    url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-    caption: 'शांति निकेतन ध्यान कक्ष',
-    title: 'शांति निकेतन ध्यान कक्ष',
-    category: 'Ashram Darshan',
-    eventDate: '2026-05-18',
-    description: 'सुरत-शब्द योग नाम-साधना का अत्यंत शांत एवं पवित्र ध्यान कक्ष।',
-  },
-  {
-    id: 'sample-006',
-    url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80',
-    caption: 'विशाल जनसमूह अमृत सत्संग श्रवण',
-    title: 'विशाल जनसमूह अमृत सत्संग श्रवण',
-    category: 'Satsang Samagam',
-    eventDate: '2026-04-12',
-    description: 'पूज्य महाराज जी के अमृत वचनों को एकाग्रचित्त होकर सुनते श्रद्धालु।',
-  },
-];
-
 export const PhotoGallery = () => {
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -85,14 +28,14 @@ export const PhotoGallery = () => {
       try {
         const res = await api.get('/gallery?limit=100');
         if (isMounted) {
-          if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          if (res.success && Array.isArray(res.data)) {
             setAlbums(res.data);
           } else {
-            setAlbums(DEFAULT_SAMPLE_PHOTOS);
+            setAlbums([]);
           }
         }
       } catch (err) {
-        if (isMounted) setAlbums(DEFAULT_SAMPLE_PHOTOS);
+        if (isMounted) setAlbums([]);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -230,8 +173,18 @@ export const PhotoGallery = () => {
           </div>
         ) : (
           <EmptyState
-            title="No photos found"
-            description="There are currently no photos matching your search or category."
+            title={
+              albums.length === 0
+                ? "फोटो गैलरी शीघ्र अपडेट होगी (Photo Gallery Coming Soon)"
+                : "कोई छायाचित्र नहीं मिला (No Photos Found)"
+            }
+            description={
+              albums.length === 0
+                ? "आश्रम दर्शन एवं पावन भंडारा महोत्सव के छायाचित्र शीघ्र ही यहाँ प्रदर्शित किए जाएंगे। एडमिन पैनल से नए छायाचित्र जोड़े जा सकते हैं।"
+                : "आपके द्वारा चुने गए वर्ग अथवा खोज शब्द से कोई छायाचित्र मेल नहीं खाता।"
+            }
+            actionText="मुख्य पृष्ठ (Home)"
+            actionLink="/"
           />
         )}
 
